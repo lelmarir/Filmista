@@ -1,17 +1,10 @@
 package org.hamisto.userInterface;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import org.hamisto.seachBox.SearchBox;
 import org.hamisto.tabPaneFX.JFXTabPane;
 
 public class Guiseries2 extends Application {
@@ -30,7 +23,7 @@ public class Guiseries2 extends Application {
 	}
 
 	/*
-	 * //setto propietà progress bar progressBar.setIndeterminate(true);
+	 * //setto propiet�� progress bar progressBar.setIndeterminate(true);
 	 * progressBar.putClientProperty("JProgressBar.style", "circular");
 	 * 
 	 * 
@@ -45,7 +38,7 @@ public class Guiseries2 extends Application {
 	 * results1.add(flow); //scroll.add(results1); this.add(scroll);
 	 * 
 	 * 
-	 * //setto propietà JFrame setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	 * //setto propiet�� JFrame setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	 * setSize(1000, 700);
 	 * 
 	 * }

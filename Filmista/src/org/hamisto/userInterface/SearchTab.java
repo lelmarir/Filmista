@@ -1,14 +1,4 @@
 package org.hamisto.userInterface;
-
-import java.awt.List;
-import java.util.ArrayList;
-
-import org.hamisto.filmista.Serie;
-import org.hamisto.seachBox.SearchBox;
-import org.hamisto.tabPaneFX.JFXTabPane;
-import org.hamisto.userInterface.WorkMonitor.WorkListener;
-
-import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -18,10 +8,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
+import org.hamisto.filmista.Serie;
+import org.hamisto.userInterface.WorkMonitor.WorkListener;
+
 public class SearchTab extends HBox{
 	
 		FlowPane flow;// Panel a cui aggiungo la text e la progress bar	
-		SearchBox search;// Barra di ricerca
+		org.hamisto.filmista.SearchBox search;// Barra di ricerca
 		ProgressIndicator proIn;// progress bar
 		
 	public SearchTab() {
@@ -31,12 +24,12 @@ public class SearchTab extends HBox{
 		flow.setAlignment(Pos.TOP_LEFT);
 		flow.setHgap(20);
 		{
-			search = new SearchBox();
+			search = new org.hamisto.filmista.SearchBox();
 			search.setOnKeyReleased(new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent arg0) {
 					if(arg0.getCode() == KeyCode.ENTER){
-						search((SearchBox) arg0.getSource());
+						search((org.hamisto.filmista.SearchBox) arg0.getSource());
 					}
 				}
 			});
@@ -49,7 +42,7 @@ public class SearchTab extends HBox{
 		getChildren().add(flow);
 	}
 	
-	private void search(SearchBox searchBox){
+	private void search(org.hamisto.filmista.SearchBox searchBox){
 		String searchText = searchBox.getTextBox().getText();
 		
 	   
@@ -57,7 +50,6 @@ public class SearchTab extends HBox{
 			@Override
 			public void worked(WorkMonitor source) {
 				// TODO Auto-generated method stub
-				System.out.println("Hello World!");
 				source.work();
 				float count = source.getProgress();
 				System.out.println("Progress:" + count);

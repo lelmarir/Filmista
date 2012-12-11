@@ -11,6 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -201,7 +211,7 @@ public class GUIseries extends JFrame implements ActionListener{
 					loweredbevel);
 
 			flow2.setBorder(compound);
-			FlowLayout layout1 = new FlowLayout(FlowLayout.LEFT);
+			
 			// flow1.setLayout(layout1);
 
 			// flow1.add(lista.get(i).getPoster());
