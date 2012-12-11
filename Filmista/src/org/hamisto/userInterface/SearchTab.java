@@ -44,7 +44,7 @@ public class SearchTab extends HBox{
 	
 	private void search(org.hamisto.filmista.SearchBox searchBox){
 		String searchText = searchBox.getTextBox().getText();
-		
+		System.out.println("search");
 	   
 		Serie.CreateSeriesListWorker(searchText, new WorkMonitor(1,new WorkListener() {
 			@Override

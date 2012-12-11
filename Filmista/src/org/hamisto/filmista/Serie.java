@@ -52,6 +52,7 @@ public class Serie {
         
 		@Override
 		protected List<Serie> doInBackground() throws Exception {
+			System.out.println("doInBackground");
 			if(monitor == null){
 				monitor = new WorkMonitor(0, null);
 			}
@@ -132,6 +133,7 @@ public class Serie {
     
     
 	public static List<Serie> createSeriesList(String seriesName, final WorkMonitor monitor) {
+		System.out.println("create");
 		monitor.setMaxWork(20);
 		Integer activeThreadCount = new Integer(0);
 		ArrayList<Serie> listaSerie = new ArrayList<Serie>();
@@ -158,10 +160,8 @@ public class Serie {
 			//bannerNode=doc.getElementsByTagName()
 
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         monitor.work();

@@ -71,11 +71,6 @@ public class GUIseries2 extends JFrame implements ActionListener,ListSelectionLi
 		scroll=new JScrollPane(l);
 		p1.add(scroll);
       
-         
-
-
-
-
 		Insets insets = p1.getInsets();
 		
 		
