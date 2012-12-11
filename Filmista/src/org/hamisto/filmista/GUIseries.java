@@ -11,16 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -129,7 +119,7 @@ public class GUIseries extends JFrame implements ActionListener{
 		  
 		    
 			flow.add(progressBar);
-			System.out.println("ciao miki è uno stronzo");
+			System.out.println("ciao miki �� uno stronzo");
 			flow.updateUI();
 			results.updateUI();
 			results1.updateUI();
@@ -329,7 +319,7 @@ public class GUIseries extends JFrame implements ActionListener{
 }
 // updateUI() serve per aggiornare il jframe una volta che io rinfresco gli
 // elementi presenti al suo interno
-// setContentPane ��� usato per settare il panello di default del frame
+// setContentPane ��������� usato per settare il panello di default del frame
 // quindi una volta che vado a creare il mio panello dove ho contenuto tutti i
 // miei oggetti
 // uso il setContentPane e inserisco tale panello.
