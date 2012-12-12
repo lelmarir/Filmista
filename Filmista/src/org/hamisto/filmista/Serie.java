@@ -34,59 +34,44 @@ import org.xml.sax.SAXException;
 public class Serie {
 	
 	
-	private static class SerieWorker extends SwingWorker<List<Serie>,Object>{
+	private static class SerieWorker extends Thread{
 		
 		private String serieName;
 		private SerieWorkerListener listener;
 		private WorkMonitor monitor;
 		
-        public SerieWorker(String serieName, SerieWorkerListener listener) {
+        public SerieWorker(String serieName, SerieWorkerListener listener, WorkMonitor monitor) {
         	this.serieName=serieName;
         	this.listener = listener;
-		}
-        
-        public SerieWorker(String serieName, WorkMonitor monitor) {
-        	this.serieName=serieName;
         	this.monitor = monitor;
 		}
-        
+		
+		protected void done(List<Serie> series) {
+		if(this.listener != null){
+			listener.WorkerDone(series);
+		}
+		
+	}
+
 		@Override
-		protected List<Serie> doInBackground() throws Exception {
+		public void run() {
 			System.out.println("doInBackground");
 			if(monitor == null){
-				monitor = new WorkMonitor(0, null);
+				monitor = new WorkMonitor(null);
 			}
 			List<Serie> lista=Serie.createSeriesList(serieName, monitor);
 			for ( int i = 0; i < lista.size(); i++){
 				
 				System.out.println("\n\n\nId:"+ lista.get(i).id + "\nNome:" + lista.get(i).nome);
 			}
-			return lista;
-		}
-		
-		@Override
-		protected void done() {
-		if(this.listener != null){
-			super.done();
-			try {
-				listener.WorkerDone(get());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-	}
+			
+			done(lista);
+		} 
+	} 
 	
     
-	public static void CreateSeriesListWorker(String text, SerieWorkerListener listener) {
-		new SerieWorker(text, listener).execute();
-    }
-	
-	public static void CreateSeriesListWorker(String text, WorkMonitor monitor) {
-		new SerieWorker(text, monitor).execute();
+	public static void CreateSeriesListWorker(String text, SerieWorkerListener listener, WorkMonitor monitor) {
+		new SerieWorker(text, listener, monitor).start();
     }
 	
 	private static DocumentBuilder documentBuilder;
@@ -110,7 +95,8 @@ public class Serie {
 	//get per il thread
 	private static ExecutorService getThreadPool(){
 		if(executorPool==null){
-			executorPool = Executors.newFixedThreadPool(15);
+			executorPool = Executors.newFixedThreadPool(15
+					);
 		}
 		
 		return executorPool;
@@ -135,7 +121,7 @@ public class Serie {
 	public static List<Serie> createSeriesList(String seriesName, final WorkMonitor monitor) {
 		System.out.println("create");
 		monitor.setMaxWork(20);
-		Integer activeThreadCount = new Integer(0);
+		monitor.work(0);
 		ArrayList<Serie> listaSerie = new ArrayList<Serie>();
 
 		String requestUrl = "http://www.thetvdb.com/api/GetSeries.php?seriesname="
@@ -143,8 +129,6 @@ public class Serie {
 		NodeList idNodeList = null;
 		NodeList nameNode = null;
 		NodeList overviewNode = null;
-		//banner
-		NodeList bannerNode=null;
 		
 		DocumentBuilder db=getDocumentBuilder();
 		try {

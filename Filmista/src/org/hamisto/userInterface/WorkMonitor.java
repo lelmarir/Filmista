@@ -14,8 +14,8 @@ public class WorkMonitor {
 	private int currentWork;
 	private List<WorkListener> listeners;
 	
-	public WorkMonitor(int maxWork, WorkListener listener) {
-		this.maxWork = maxWork;
+	public WorkMonitor(WorkListener listener) {
+		this.maxWork = 0;
 		this.listeners = new LinkedList<WorkMonitor.WorkListener>();
 		this.addListener(listener);
 	}
@@ -32,7 +32,7 @@ public class WorkMonitor {
 	}
 	
 	public float getProgress(){
-		return currentWork / maxWork;
+		return ((float)currentWork) / ((float)maxWork);
 	}
 
 	public int getMaxWork() {
