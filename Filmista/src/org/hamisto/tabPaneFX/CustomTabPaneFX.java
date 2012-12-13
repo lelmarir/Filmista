@@ -15,6 +15,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -154,7 +156,9 @@ public class CustomTabPaneFX extends Application {
 
 			JFXTabPane.Tab t1 = new JFXTabPane.Tab("Preferiti");
 			t1.setImage(new Image("img/preferiti.png", 70, 70, true, true, true));
-			t1.getLayout().getChildren().add(new Button("aa"));
+			Pane p1 = new Pane();
+			p1.getChildren().add(new Button("aa"));
+			t1.setLayout(p1);
 			tabPane.addTab(t1);
 
 			JFXTabPane.Tab t2 = new JFXTabPane.Tab("Cerca");

@@ -1,9 +1,12 @@
 package org.hamisto.userInterface;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import org.hamisto.tabPaneFX.JFXTabPane;
 
@@ -111,7 +114,7 @@ public class Guiseries2 extends Application {
 	 */
 	
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(final Stage primaryStage) throws Exception {
 		
 		tabPane = new JFXTabPane();
 		// aggiungo search al Flow
@@ -123,8 +126,10 @@ public class Guiseries2 extends Application {
 		tabPane.addTab(tab1);
 
 		JFXTabPane.Tab tab2 = new JFXTabPane.Tab("Cerca");
-		tab2.setImage(new Image("img/cerca.png", 70, 70, true, true, true));
-		tab2.setLayout(new SearchTab());
+		tab2.setImage(new Image("img/cerca.png", 70, 70, true, true,true));
+		ScrollPane sPane = new ScrollPane();
+		sPane.setContent(new SearchTab());
+		tab2.setLayout(sPane);
 		tabPane.addTab(tab2);
 		tabPane.select(tab2);
 
@@ -137,6 +142,16 @@ public class Guiseries2 extends Application {
 				Guiseries2.class.getResource("style.css").toExternalForm()
 				);
 		primaryStage.setScene(scene);
+		
+		//close Window of primaryStage
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			 
+	          @Override
+	          public void handle(WindowEvent event) {
+	          if(event.getSource() == WindowEvent.WINDOW_CLOSE_REQUEST){
+	          primaryStage.close();}
+	          }
+		});
 		primaryStage.show();
 	}
 }

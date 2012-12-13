@@ -13,8 +13,10 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,18 +34,18 @@ public class JFXTabPane extends BorderPane{
 	public static class Tab{
 		private String name;
 		private Image image;
-		private Pane layout;
+		private Parent layout;
 		private Button button;
 		
 		public Tab(String name) {
 			this(name, null, null);
 		}
 		
-		public Tab(String name, Pane layout) {
+		public Tab(String name, Control layout) {
 			this(name, null, layout);
 		}
 		
-		public Tab(String name, Image image, Pane layout) {
+		public Tab(String name, Image image, Control layout) {
 			super();
 			this.name = name;
 			this.setImage(image);
@@ -68,19 +70,15 @@ public class JFXTabPane extends BorderPane{
 			initButtonImage();
 		}
 
-		public Pane getLayout() {
+		public Parent getLayout() {
 			if(layout == null){
 				this.layout = new Pane();
 			}
 			return layout;
 		}
 
-		public void setLayout(Pane layout) {
+		public void setLayout(Parent layout) {
 			this.layout = layout;
-		}
-
-		public ObservableList<Node> getChildren() {
-			return getLayout().getChildren();
 		}
 		
 		protected Button createButton(){

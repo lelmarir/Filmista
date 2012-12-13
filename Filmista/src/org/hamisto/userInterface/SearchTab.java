@@ -4,23 +4,25 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import org.hamisto.filmista.Serie;
 import org.hamisto.filmista.SerieWorkerListener;
 import org.hamisto.userInterface.WorkMonitor.WorkListener;
 
-public class SearchTab extends HBox {
+public class SearchTab extends VBox {
 
 	FlowPane searchLayout;// Panel a cui aggiungo la text e la progress bar
 	org.hamisto.filmista.SearchBox search;// Barra di ricerca
 	ProgressIndicator proIn;// progress bar
+	VBox seriesContainer;
 
 	public SearchTab() {
 		getStyleClass().add("tab-layout");
@@ -28,6 +30,7 @@ public class SearchTab extends HBox {
 		searchLayout = new FlowPane(Orientation.HORIZONTAL);
 		searchLayout.setAlignment(Pos.TOP_LEFT);
 		searchLayout.setHgap(0);
+
 		{
 			search = new org.hamisto.filmista.SearchBox();
 			search.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -39,7 +42,7 @@ public class SearchTab extends HBox {
 					}
 				}
 			});
-			
+
 		}
 		searchLayout.getChildren().add(search);
 		proIn = new ProgressIndicator();
@@ -48,11 +51,16 @@ public class SearchTab extends HBox {
 		proIn.setVisible(false);
 		searchLayout.getChildren().add(proIn);
 		getChildren().add(searchLayout);
+
+		seriesContainer = new VBox(20);
+		seriesContainer.setPadding(new Insets(25, 25, 25, 25));
+		getChildren().add(seriesContainer);
+		
 	}
 
 	private void search(org.hamisto.filmista.SearchBox searchBox) {
 		String searchText = searchBox.getTextBox().getText();
-		
+
 		searchBox.getTextBox().setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent arg0) {
@@ -60,28 +68,44 @@ public class SearchTab extends HBox {
 			}
 		});
 
-		Serie.CreateSeriesListWorker(searchText, new SerieWorkerListener() {
-
-			@Override
-			public void WorkerDone(List<Serie> series) {
-				System.out.println(series);
-				proIn.setProgress(1f);
-			}
-		}, new WorkMonitor(new WorkListener() {
+		final WorkMonitor monitor = new WorkMonitor(new WorkListener() {
 			@Override
 			public void worked(WorkMonitor source) {
 				final float progress = source.getProgress();
-				System.out.println("Progress:" + progress + "["+source.getCurrentWork()+"/"+source.getMaxWork()+"]");
+				System.out.println("Progress:" + progress + "["
+						+ source.getCurrentWork() + "/" + source.getMaxWork()
+						+ "]");
 				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-			        	proIn.setVisible(true);
-			        	proIn.setProgress(progress);
-			        }
-			   });
-				
+					@Override
+					public void run() {
+						proIn.setVisible(true);
+						proIn.setProgress(progress);
+					}
+				});
+
 			}
-		}));
+		});
+		Serie.CreateSeriesListWorker(searchText, new SerieWorkerListener() {
+
+			@Override
+			public void WorkerDone(final List<Serie> series) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						seriesContainer.getChildren().clear();
+						monitor.addMaxWork(series.size());
+						for (Serie s : series) {
+							seriesContainer.getChildren().add(new SerieInfo(s));
+							monitor.work();
+						}
+						monitor.setMaxWork(monitor.getCurrentWork()+1);//finito
+						monitor.work();
+						proIn.setProgress(1f);
+					}
+				});
+
+			}
+		}, monitor);
 
 	}
 }

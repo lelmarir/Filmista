@@ -1,8 +1,5 @@
 package org.hamisto.filmista;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,15 +10,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingWorker;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
+import javafx.scene.image.Image;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -105,17 +98,7 @@ public class Serie {
 	
 	
 	
-	 //metodo per ridimensionare  il banner
-    private ImageIcon scale(Image src, double scale) {
-        int w = (int)(scale*src.getWidth(this.poster));
-        int h = (int)(scale*src.getHeight(this.poster));
-        int type = BufferedImage.TYPE_INT_RGB;
-        BufferedImage dst = new BufferedImage(w, h, type);
-        Graphics2D g2 = dst.createGraphics();
-        g2.drawImage(src, 0, 0, w, h, this.poster);
-        g2.dispose();
-        return new ImageIcon(dst);
-    }
+
     
     
 	public static List<Serie> createSeriesList(String seriesName, final WorkMonitor monitor) {
@@ -208,7 +191,7 @@ public class Serie {
 	private String shortOverview;
 	private List<Stagione> stagioni;
 	//banner
-	private JLabel poster;
+	private Image poster;
 
 	public Serie() {
 		this.stagioni = new LinkedList<Stagione>();
@@ -309,51 +292,41 @@ public class Serie {
 	}
 
 	
-	public JLabel getPoster() {
+	public Image getPoster() {
 		return poster;
 	}
 
     
 	//banners->nn devi salvarlo...
 	
-    public JLabel loadBanner(){
+    public Image loadBanner(){
 
-		poster=new JLabel();
 		URL u1 = null;
-		ImageIcon image = null;
-		
+		javafx.scene.image.Image image = null;
 		try {
-			
-			u1 = new URL("http://www.thetvdb.com/banners/_cache/posters/"+this.getId()+"-1.jpg");
-			
-             
-			    }
-		catch (MalformedURLException e) {
-			
-		    e.printStackTrace();
-			
-		} 
+			u1= new URL("http://www.thetvdb.com/banners/_cache/posters/"+this.getId()+"-1.jpg");
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
 		//setto immagine poster
 		try {
 			if(u1.openConnection().getContentLength() > 0){
-				image = new ImageIcon(u1);
+				image = new Image("http://www.thetvdb.com/banners/_cache/posters/"+this.getId()+"-1.jpg",220,220,true,true,true);
 				System.out.println(u1);}
 			
 			else
-				image = new ImageIcon("images/Imagenotfound_v2.png");
+				image = new Image("img/Imagenotfound_v2.png",130,190,false,false,false);
 				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		image = scale(image.getImage(),0.45);
-	    this.poster.setIcon(image);
+	    this.poster= image;
 	    
-	    //setto bordo poster
-	    Border bevel;
-	    bevel = new BevelBorder(BevelBorder.RAISED);
-	    this.poster.setBorder(bevel); 
+	    
 	    
 	    return this.poster;
     }

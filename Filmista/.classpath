@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/hamisto/filmista/GUIseries.java" kind="src" path="src"/>
+	<classpathentry excluding="org/hamisto/filmista/GUIseries.java|org/hamisto/tabPaneFX/CustomTabPaneFX.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/QuickPool.jar"/>
 	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_09.jdk/Contents/Home/jre/lib/jfxrt.jar"/>
+	<classpathentry kind="lib" path="libs/JFXtras-0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

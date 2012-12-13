@@ -42,6 +42,10 @@ public class WorkMonitor {
 	public void setMaxWork(int maxWork) {
 		this.maxWork = maxWork;
 	}
+	
+	public void addMaxWork(int add){
+		this.maxWork += add;
+	}
 
 	public int getCurrentWork() {
 		return currentWork;
