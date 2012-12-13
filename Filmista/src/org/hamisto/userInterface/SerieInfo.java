@@ -54,8 +54,6 @@ public class SerieInfo extends GridPane{
      nome.setFont(Font.font("Arial", 18));
      
      Button btn = new Button("Aggiungi");
-     String buttonCss = SerieInfo.class.getResource("CustomButton.css").toExternalForm();
- 	 this.getStylesheets().add(buttonCss);
      HBox hbBtn = new HBox(10);
      hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
      hbBtn.getChildren().add(btn);
