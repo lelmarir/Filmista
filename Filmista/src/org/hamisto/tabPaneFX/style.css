@@ -1,0 +1,7 @@
+.tab-button:focused {
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+.tab-button.current {
+	-fx-background-color:#9A9A9A;
+}
