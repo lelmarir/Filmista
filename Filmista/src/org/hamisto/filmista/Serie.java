@@ -98,6 +98,10 @@ public class Serie {
 		return executorPool;
 
 	}
+	
+	private static void clearExecutorPool(){
+		executorPool=null;
+	}
 
 	public static List<Serie> createSeriesList(String seriesName,
 			final WorkMonitor monitor) {
@@ -178,9 +182,9 @@ public class Serie {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
-		} finally{
-			
+		} finally{			
 			executorPool.shutdownNow();
+			clearExecutorPool();
 		}
 
 		return listaSerie;
