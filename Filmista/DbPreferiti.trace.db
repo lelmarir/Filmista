@@ -1,0 +1,3 @@
+12-25 18:58:30 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "TABSERIES" not found; SQL statement:
+insert into TABSERIES(Id, Name, Overview, Image) values(?,?,?,?) [42102-170]
