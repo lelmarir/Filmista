@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -20,7 +19,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hamisto.userInterface.TabCerca;
 import org.hamisto.userInterface.WorkMonitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -112,6 +110,7 @@ public class Serie {
 
 		String requestUrl = "http://www.thetvdb.com/api/GetSeries.php?seriesname="
 				+ seriesName;
+		System.out.println(requestUrl);
 		NodeList idNodeList = null;
 		NodeList nameNode = null;
 		NodeList overviewNode = null;
@@ -170,7 +169,7 @@ public class Serie {
 					}
 				};
 				tasks.add(Executors.callable(job1));
-
+            
 				listaSerie.add(s);
 
 			}
@@ -198,6 +197,8 @@ public class Serie {
 	private List<Stagione> stagioni;
 	// banner
 	private Image poster;
+
+	
 
 	public Serie() {
 		this.stagioni = new LinkedList<Stagione>();
@@ -302,6 +303,10 @@ public class Serie {
 
 	public Image getPoster() {
 		return poster;
+	}
+	
+	public void setPoster(Image poster) {
+		this.poster = poster;
 	}
 
 	// banners->nn devi salvarlo...

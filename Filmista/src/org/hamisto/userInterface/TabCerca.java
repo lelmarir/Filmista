@@ -110,6 +110,7 @@ public class TabCerca extends Tab {
 						seriesContainer.getChildren().clear();
 						monitor.addMaxWork(series.size());
 						
+						System.out.println(series.size());
 						//prendo la dimensione del vettore che contiene i preferiti prima di svolgere una
 						//nuova ricerca...
 						//count2 = Preferiti.GetSeries().size();
@@ -129,3 +130,4 @@ public class TabCerca extends Tab {
 
 	}
 }
+

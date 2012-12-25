@@ -1,5 +1,7 @@
 package org.hamisto.userInterface;
 
+import java.sql.SQLException;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -8,135 +10,37 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import org.hamisto.database.DbPreferiti;
 import org.hamisto.tabPaneFX.JFXTabPane;
 
 public class Guiseries2 extends Application {
 
+	
 	static JFXTabPane tabPane;
-    public static int count = 0;
+	public static int count = 0;
+    static Stage stage;
+	
+	
 	public Guiseries2() {
 
-//		Stage primaryStage = new Stage();
-//		try {
-//			start(primaryStage);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 
-	/*
-	 * //setto propiet�� progress bar progressBar.setIndeterminate(true);
-	 * progressBar.putClientProperty("JProgressBar.style", "circular");
-	 * 
-	 * 
-	 * 
-	 * setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	 * 
-	 * 
-	 * //setto i layout flow.setLayout(new FlowLayout(FlowLayout.LEFT));
-	 * results1.setLayout(new BoxLayout(results1, BoxLayout.Y_AXIS));
-	 * 
-	 * //aggiungo componenti base per la ricerca flow.add(text);
-	 * results1.add(flow); //scroll.add(results1); this.add(scroll);
-	 * 
-	 * 
-	 * //setto propiet�� JFrame setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	 * setSize(1000, 700);
-	 * 
-	 * }
-	 * 
-	 * @Override public void actionPerformed(ActionEvent e) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * if(e.getSource()==this.text){ flow.add(progressBar); results1.updateUI();
-	 * 
-	 * 
-	 * Serie.CreateSeriesListWorker(text.getText(), new SerieWorkerListener() {
-	 * 
-	 * @Override public void WorkerDone(List<Serie> series) { // TODO: rimuovere
-	 * indicatore caricameto
-	 * 
-	 * flow.remove(progressBar); flow.updateUI();
-	 * 
-	 * 
-	 * // TODO: visualizare lista serie showSeriesList(series);
-	 * 
-	 * }
-	 * 
-	 * 
-	 * }); } }
-	 * 
-	 * 
-	 * private void showSeriesList(final List<Serie> series) { if(jfxpanel ==
-	 * null){ jfxpanel = new JFXPanel(); }else{ jfxpanel.removeAll(); }
-	 * results1.add(jfxpanel);
-	 * 
-	 * results1.updateUI(); scroll.updateUI(); Platform.runLater(new Runnable()
-	 * {
-	 * 
-	 * @Override public void run() { initFX(jfxpanel); //Platform.exit();
-	 * 
-	 * } });
-	 * 
-	 * 
-	 * }
-	 * 
-	 * 
-	 * private static void initFX(JFXPanel fxpanel) { // TODO Auto-generated
-	 * method stub //int listSize = series.size(); GridPane root = new
-	 * GridPane(); root.setHgap(10); root.setVgap(10); root.setPadding(new
-	 * Insets(25, 25, 25, 25));
-	 * 
-	 * for (int i = 0; i < 5; i++) {
-	 * 
-	 * 
-	 * //List<Stagione> listaSeason = series.get(i).getStagioni();
-	 * 
-	 * Label post = new Label(); Image image5 = new
-	 * Image("http://www.thetvdb.com//banners/_cache/posters/82696-1.jpg"
-	 * ,160,200,true,true,true); post.setGraphic(new ImageView(image5));
-	 * //TextArea descr = new TextArea(series.get(i).getOverview());
-	 * 
-	 * //descr.setWrapText(true); //descr.setEditable(false);
-	 * 
-	 * // Text name = new Text(series.get(i).getNome()); //Scene scene = new
-	 * Scene(root, Color.ALICEBLUE); root.add(post, 0, i); //root.add(name, 1,
-	 * i); //root.add(descr, i+1, i+1, 4, 1);
-	 * 
-	 * }
-	 * 
-	 * 
-	 * Scene scene = new Scene(root); scene.setFill(null);
-	 * fxpanel.setScene(scene);
-	 * 
-	 * }
-	 */
-	
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
+
+		
+		stage = primaryStage;
 		
 		tabPane = new JFXTabPane();
 		// aggiungo search al Flow
-		
 
 		// setto tabPane
 		final JFXTabPane.Tab tab1 = new TabPreferiti();
 		tabPane.addTab(tab1);
-        
+
 		JFXTabPane.Tab tab2 = new TabCerca();
 		tabPane.addTab(tab2);
 		tabPane.select(tab2);
-		
-//		tab2.getButton().addEventHandler(MouseEvent.MOUSE_PRESSED, 
-//			    new EventHandler<MouseEvent>() {
-//			        @Override 
-//			        public void handle(MouseEvent e) {
-//			        	SearchTab.count2 = Guiseries2.count;
-//			            
-//			        }
-//			});
-		
 
 		JFXTabPane.Tab tab3 = new JFXTabPane.Tab("Impostazioni");
 		tab3.setImage(new Image("img/settings.png", 70, 70, true, true, true));
@@ -144,31 +48,52 @@ public class Guiseries2 extends Application {
 
 		Scene scene = new Scene(tabPane, 950, 700);
 		tabPane.getStylesheets().add(
-				Guiseries2.class.getResource("style.css").toExternalForm()
-				);
+				Guiseries2.class.getResource("style.css").toExternalForm());
 		primaryStage.setScene(scene);
-		
-		//close Window of primaryStage
+
+		// close Window of primaryStage
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			 
-	          @Override
-	          public void handle(WindowEvent event) {
-	          if(event.getSource() == WindowEvent.WINDOW_CLOSE_REQUEST){
-	        	  
-	        	  //Dove richiamare il database per salvare le modifiche prima della chiusura
-	        	  //Database.getIstance().close();
-	        	  primaryStage.close();
-	              }
-	          }
+
+			@Override
+			public void handle(WindowEvent event) {
+				
+					
+				 try {
+					DbPreferiti.getData();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+					if (TabPreferiti.cb.getSelectionModel().getSelectedItem().toString()
+							.equals("Last Added") == true) {
+                            
+						
+					}
+
+					if (TabPreferiti.cb.getSelectionModel().getSelectedItem().toString()
+							.equals("Series Name") == true) {
+
+						
+
+					}
+					
+
+						primaryStage.close();
+				}
+			
 		});
+		
 		primaryStage.show();
+		
 	}
 
-	
-	public  Parent SerieGetTab(){
-		
-		
+	public Parent SerieGetTab() {
+
 		return null;
-	
+
 	}
 }
