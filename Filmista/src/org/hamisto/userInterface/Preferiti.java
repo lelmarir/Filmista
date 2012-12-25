@@ -23,7 +23,7 @@ public class Preferiti extends GridPane {
 	}
 
 	private Preferiti() {
-		series = new ArrayList<Serie>();
+		series = DbPreferiti.getInstance().getData();
 		
 	}
 

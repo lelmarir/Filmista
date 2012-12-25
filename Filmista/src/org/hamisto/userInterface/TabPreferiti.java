@@ -111,39 +111,8 @@ public class TabPreferiti extends Tab {
 
 	@Override
 	public void afterActivate() {
-		
-		if(activate){
-		try {
-			DbPreferiti.getInstance().getData();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/*try {
-			DbPreferiti dbPref = new DbPreferiti();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		super.afterActivate();
-		updateTab();
-		activate = false;
-		}
-		
-		else{
-			
-		
-		super.afterActivate();
-		updateTab();
-		
-		}
-		
+		updateTab();		
 	}
 
 	public void updateTab() {

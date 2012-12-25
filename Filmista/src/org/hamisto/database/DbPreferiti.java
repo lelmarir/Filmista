@@ -15,19 +15,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import javafx.scene.image.Image;
 
 import org.hamisto.filmista.Serie;
-import org.hamisto.userInterface.Preferiti;
 
 public class DbPreferiti {
 
+	private static final String DB_PATH = "DbPreferiti";
 	
 	static DbPreferiti instance;
 	boolean table = true;
 	
-	public static DbPreferiti getInstance() throws ClassNotFoundException, SQLException {
+	public static DbPreferiti getInstance() {
 		if (instance == null) {
 			instance = new DbPreferiti();
 		}
@@ -35,12 +37,13 @@ public class DbPreferiti {
 	}
 	
 	
-	public DbPreferiti() throws ClassNotFoundException, SQLException {
+	public DbPreferiti(){
 		// TODO Auto-generated constructor stub
 		  
-		  Class.forName("org.h2.Driver");
-	      String db_file_path = "~/Documents/workspace2/Filmista/DbPreferiti";
-	      Connection conn = DriverManager.getConnection("jdbc:h2:"+ db_file_path, "sa", "");
+		  try {
+			Class.forName("org.h2.Driver");
+		
+	      Connection conn = DriverManager.getConnection("jdbc:h2:"+ DB_PATH, "sa", "");
 	      Statement stat = conn.createStatement();
 	      
 	      DatabaseMetaData databaseMetaData = conn.getMetaData();
@@ -74,18 +77,27 @@ public class DbPreferiti {
 	      conn.close();
 	      result.close();
 	      
+	      } catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	     public static void getData() throws ClassNotFoundException, SQLException{
-		
-	     Preferiti.getInstance();
+	     public List<Serie> getData(){
+	    List<Serie> list = new LinkedList<>();
+	    try {
 		 Class.forName("org.h2.Driver");
-	     String db_file_path = "~/Documents/workspace2/Filmista/DbPreferiti";
-	     Connection conn = DriverManager.getConnection("jdbc:h2:"+ db_file_path, "sa", "");
+	     Connection conn = DriverManager.getConnection("jdbc:h2:"+ DB_PATH, "sa", "");
 	     Statement stat = conn.createStatement();
 	     
 	     String query = "SELECT * FROM TABSERIES";
-	     ResultSet res = stat.executeQuery(query);
+	     ResultSet res;
+		
+			res = stat.executeQuery(query);
+		
 	     InputStream imgData = null;
 	      
 	      while (res.next()) {
@@ -99,16 +111,27 @@ public class DbPreferiti {
 		     
 	    	s.setPoster(new Image(imgData, 220, 220, true,
 					true));
-	    	Preferiti.getInstance().addToPreferiti(s);
+	    	list.add(s);
 		     
 	        /*System.out.println(res.getString("Id"));*/
 	        System.out.println(res.getString("Name"));
 	        //System.out.println(res.getString("Overview"));
 	      }
 	      
+	      res.close();
 	      stat.close();
 	      conn.close();
-	      res.close();
+	      
+	      return list;
+	      
+	    } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return null;
 	}
 	
 	
@@ -117,12 +140,11 @@ public class DbPreferiti {
 		  
 		 //poster
 		 String imageUrl = s.getPoster().impl_getUrl();
-		 String destinationFile = "/Users/mohamedchajii/Documents/workspace2/Filmista/Filmista/image/image-" + s.getId() + ".png";
+		 String destinationFile = "image/image-" + s.getId() + ".png";
 		 saveImage(imageUrl, destinationFile);
 		 
 		 Class.forName("org.h2.Driver");
-	     String db_file_path = "~/Documents/workspace2/Filmista/DbPreferiti";
-	     Connection conn = DriverManager.getConnection("jdbc:h2:"+ db_file_path, "sa", "");
+	     Connection conn = DriverManager.getConnection("jdbc:h2:"+ DB_PATH, "sa", "");
 		 PreparedStatement pstmt =
 			      conn.prepareStatement("insert into TABSERIES(Id, Name, Overview, Image) "+ "values(?,?,?,?)");
 			      pstmt.setString(1,s.getId());

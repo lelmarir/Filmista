@@ -1,8 +1,5 @@
 package org.hamisto.userInterface;
 
-
-
-
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -13,7 +10,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;

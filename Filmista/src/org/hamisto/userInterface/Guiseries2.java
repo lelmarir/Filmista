@@ -56,32 +56,6 @@ public class Guiseries2 extends Application {
 
 			@Override
 			public void handle(WindowEvent event) {
-				
-					
-				 try {
-					DbPreferiti.getData();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-					if (TabPreferiti.cb.getSelectionModel().getSelectedItem().toString()
-							.equals("Last Added") == true) {
-                            
-						
-					}
-
-					if (TabPreferiti.cb.getSelectionModel().getSelectedItem().toString()
-							.equals("Series Name") == true) {
-
-						
-
-					}
-					
-
 						primaryStage.close();
 				}
 			
