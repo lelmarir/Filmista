@@ -15,7 +15,6 @@ public class CreateEpisodesDetail {
 	 ArrayList<SingleEpisode> es=new ArrayList<SingleEpisode>();
 	public ArrayList<SingleEpisode> episodesDetail(String url,String numbS){//ricorda di modicafare passando un vettore 
 		//di episodi singoli
-	
 			NodeList epi_nameNode = null;
 			NodeList seasonNumbNode=null;
 			NodeList epi_numberNode = null;

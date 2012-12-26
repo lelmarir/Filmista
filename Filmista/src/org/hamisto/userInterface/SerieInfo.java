@@ -3,8 +3,6 @@ package org.hamisto.userInterface;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.print.attribute.standard.DialogTypeSelection;
-
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -22,13 +20,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import org.hamisto.database.DbPreferiti;
 import org.hamisto.filmista.Serie;
-import org.jfxtras.scene.border.PipeBorder;
-import org.jfxtras.stage.DialogStage;
-import org.jfxtras.stage.DialogStageDelegate;
 
 public class SerieInfo extends GridPane{
 	

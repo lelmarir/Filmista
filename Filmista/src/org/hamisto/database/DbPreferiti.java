@@ -1,13 +1,8 @@
 package org.hamisto.database;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -18,7 +13,10 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+
+import javax.imageio.ImageIO;
 
 import org.hamisto.filmista.Serie;
 
@@ -69,7 +67,7 @@ public class DbPreferiti {
 
 
 	      if (table){
-	      String table =  "CREATE TABLE TABSERIES(Id varchar(20), Name varchar(30),Overview text, Image BLOB)";
+	      String table =  "CREATE TABLE TABSERIES(Id varchar(20), Name varchar(30),Overview text, Image varchar(30))";
 	      stat.executeUpdate(table);
 	      }
 	      
@@ -95,26 +93,22 @@ public class DbPreferiti {
 	     
 	     String query = "SELECT * FROM TABSERIES";
 	     ResultSet res;
+	     res = stat.executeQuery(query);
 		
-			res = stat.executeQuery(query);
-		
-	     InputStream imgData = null;
 	      
 	      while (res.next()) {
 	        
 	    	Serie s = new Serie();
 	    	s.setId(res.getString("Id"));  
 	    	s.setNome(res.getString("Name"));
-	    	
-	    	Blob blob = res.getBlob("Image");
-		    imgData = blob.getBinaryStream();
-		     
-	    	s.setPoster(new Image(imgData, 220, 220, true,
-					true));
+	        
+	        Image image = new Image(res.getString("Image"));
+	        s.setPoster(image);
 	    	list.add(s);
 		     
 	        /*System.out.println(res.getString("Id"));*/
 	        System.out.println(res.getString("Name"));
+	        System.out.println(res.getString("Image"));
 	        //System.out.println(res.getString("Overview"));
 	      }
 	      
@@ -138,10 +132,10 @@ public class DbPreferiti {
 	public static void addToDbPreferiti(Serie s) throws IOException,
 			ClassNotFoundException, SQLException {
 		  
-		 //poster
-		 String imageUrl = s.getPoster().impl_getUrl();
+		 
+		 
 		 String destinationFile = "image/image-" + s.getId() + ".png";
-		 saveImage(imageUrl, destinationFile);
+		 saveImage(s.getPoster(), destinationFile);
 		 
 		 Class.forName("org.h2.Driver");
 	     Connection conn = DriverManager.getConnection("jdbc:h2:"+ DB_PATH, "sa", "");
@@ -150,11 +144,7 @@ public class DbPreferiti {
 			      pstmt.setString(1,s.getId());
 			      pstmt.setString(2,s.getNome());
 			      pstmt.setString(3,s.getOverview());
-			      
-			      
-			      File file = new File(destinationFile);
-			      FileInputStream imageFile = new FileInputStream(file);
-			      pstmt.setBinaryStream(4, (InputStream)imageFile, (int)(file.length()));
+			      pstmt.setString(4,destinationFile);
 			      pstmt.executeUpdate();	  
 			      
 			     
@@ -163,21 +153,12 @@ public class DbPreferiti {
 		
 	}
 	
-	public static void saveImage(String imageUrl, String destinationFile) throws IOException {
-		URL url = new URL(imageUrl);
-		InputStream is = url.openStream();
-		OutputStream os = new FileOutputStream(destinationFile);
+	public static void saveImage(Image image, String destinationFile) throws IOException {
+		//URL url = new URL(imageUrl);
+		BufferedImage im = null ;
+	    im = SwingFXUtils.fromFXImage(image, im);
+	    ImageIO.write(im, "png", new File(destinationFile));
 		
-		byte[] b = new byte[2048];
-		int length;
-
-		while ((length = is.read(b)) != -1) {
-			os.write(b, 0, length);
-		}
-
-		is.close();
-		os.close();
 	}
-
 	
 }
