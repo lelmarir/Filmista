@@ -2,6 +2,8 @@ package org.hamisto.database;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -102,7 +104,13 @@ public class DbPreferiti {
 	    	s.setId(res.getString("Id"));  
 	    	s.setNome(res.getString("Name"));
 	        
-	        Image image = new Image(res.getString("Image"));
+	    	String imagePath = res.getString("Image");
+	        Image image = null;
+			try {
+				image = new Image(new FileInputStream(imagePath));
+			} catch (FileNotFoundException e) {
+				;//TODO: caricare immagine di default
+			}
 	        s.setPoster(image);
 	    	list.add(s);
 		     
