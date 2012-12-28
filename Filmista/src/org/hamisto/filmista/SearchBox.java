@@ -26,6 +26,7 @@ public class SearchBox extends Region{
         setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
         textBox = new TextField();
         textBox.setPromptText("Search");
+       
         textBox.setFocusTraversable(false);
         clearButton = new Button();
         clearButton.setVisible(false);

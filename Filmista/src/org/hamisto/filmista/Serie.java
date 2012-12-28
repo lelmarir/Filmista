@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -201,7 +200,7 @@ public class Serie {
 	
 
 	public Serie() {
-		this.stagioni = new LinkedList<Stagione>();
+		
 	}
 
 	public Serie(String id) {// con questo costruttore lavoro sugli oggetti
@@ -315,6 +314,7 @@ public class Serie {
 
 		URL u1 = null;
 		javafx.scene.image.Image image = null;
+		
 		try {
 			u1 = new URL("http://www.thetvdb.com/banners/_cache/posters/"
 					+ this.getId() + "-1.jpg");
@@ -326,17 +326,20 @@ public class Serie {
 		// setto immagine postert
 		try {
 			if (u1.openConnection().getContentLength() > 0) {
-				image = new Image(
+				Image image2 = new Image(
 						"http://www.thetvdb.com/banners/_cache/posters/"
 								+ this.getId() + "-1.jpg", 220, 220, true,
 						true, true);
+				image = image2;
+				
 				System.out.println(u1);
 			}
 
-			else
-				image = new Image("img/Imagenotfound_v2.png", 220, 220, true,
+			else{
+				Image image3 = new Image("img/Imagenotfound_v2.png", 220, 220, true,
 						true, true);
-
+				image = image3;
+			} 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -384,6 +387,7 @@ public class Serie {
 				preNum = number;
 
 				Stagione st1 = new Stagione(number);
+				
 
 				this.stagioni.add(st1);
 			}

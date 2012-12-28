@@ -1,7 +1,5 @@
 package org.hamisto.userInterface;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +16,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,10 +24,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
-import org.hamisto.database.DbPreferiti;
+import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
 import org.hamisto.tabPaneFX.JFXTabPane.Tab;
 
@@ -41,14 +40,12 @@ public class TabPreferiti extends Tab {
 	private BorderPane border;
 	private int lastInsertedSerieIndex = -1;
 	private int countLastAdded = 1;
-	private boolean activate = true;
-	
+	private Label order;
 	@SuppressWarnings("rawtypes")
 	static ChoiceBox cb;
 
-	
 	static boolean updatedb = false;
-	
+
 	static String name;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -57,11 +54,21 @@ public class TabPreferiti extends Tab {
 
 		mainLayout = new FlowPane();
 		cb = new ChoiceBox();
-
+		order = new Label();
 		border = new BorderPane();
-		cb.getItems().addAll("Last Added", "Series Name");
-		cb.getSelectionModel().selectFirst();
 
+		if (FilmistaDb.getInstance().numbRecordOrdinamento() == 0) {
+
+			cb.getItems().addAll("Last Added", "Series Name");
+		} else {
+
+			List<String> items = new ArrayList<String>();
+			items = FilmistaDb.getInstance().setChoiceBox();
+			cb.getItems().addAll(items);
+		}
+		
+
+		cb.getSelectionModel().selectFirst();
 		cb.getSelectionModel().selectedIndexProperty()
 				.addListener(new ChangeListener<Number>() {
 
@@ -88,8 +95,14 @@ public class TabPreferiti extends Tab {
 
 				});
 
+		order.setTextFill(Color.BLACK);
+		order.setFont(Font.font("Helvetica", 16));
+		order.setText("Order By:");
+
 		paneCb = new FlowPane(Orientation.HORIZONTAL);
+		paneCb.setHgap(8);
 		paneCb.setAlignment(Pos.CENTER_RIGHT);
+		paneCb.getChildren().add(order);
 		paneCb.getChildren().add(cb);
 		paneCb.setPadding(new Insets(0, 20, 20, 20));
 		border.setTop(paneCb);
@@ -112,7 +125,7 @@ public class TabPreferiti extends Tab {
 	@Override
 	public void afterActivate() {
 		super.afterActivate();
-		updateTab();		
+		updateTab();
 	}
 
 	public void updateTab() {
@@ -141,7 +154,7 @@ public class TabPreferiti extends Tab {
 
 			for (int i = lastInsertedSerieIndex + 1; i < list3.size(); i++) {
 				Serie serie = Preferiti.getInstance().getSeries().get(i);
-			
+
 				list.add(serie);
 
 				TabPreferiti.OrderByName(list);
@@ -166,7 +179,7 @@ public class TabPreferiti extends Tab {
 	}
 
 	private void orderByLastAdded() {
-        
+
 		System.out.println("ciao2");
 		List<Serie> list2 = Preferiti.getInstance().getSeries();
 
@@ -208,27 +221,48 @@ public class TabPreferiti extends Tab {
 	}
 
 	@SuppressWarnings("static-access")
-	private GridPane createSerieElement(Serie serie) {
+	private GridPane createSerieElement(final Serie serie) {
 		GridPane grid = new GridPane();
 		grid.setVgap(20);
 
-		Label image;
+		final Label image;
 		final Text title;
 
-		DropShadow dropShadow = new DropShadow();
+		final DropShadow dropShadow = new DropShadow();
 		dropShadow.setOffsetX(10);
 		dropShadow.setOffsetY(10);
 		dropShadow.setColor(Color.rgb(50, 50, 50, 0.7));
 
+		final String style_inner = "-fx-font: Gill Sans;"
+				+ "-fx-font-family: Gill Sans;"
+				+ "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
+
+		final String style_inner2 = "-fx-effect: dropshadow(one-pass-box, gray, 12, 0, 8, 8);";
+
 		image = new Label();
-		image.setTooltip(new Tooltip("More Information..."));
+		image.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				image.setScaleX(1.115);
+				image.setScaleY(1.115);
+				image.setStyle(style_inner2);
+
+			}
+		});
+
+		image.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				image.setScaleX(1);
+				image.setScaleY(1);
+				image.setStyle(style_inner);
+			}
+		});
+		// image.setTooltip(new Tooltip("More Information..."));
 		image.setGraphic(new ImageView(serie.getPoster()));
-		//image.setEffect(dropShadow);
-		 String style_inner = 
-			      "-fx-font: Gill Sans;"+
-			      "-fx-font-family: Gill Sans;"+
-	             "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
-		 image.setStyle(style_inner);
+		// image.setEffect(dropShadow);
+
+		image.setStyle(style_inner);
 		image.setCursor(Cursor.HAND);
 
 		if (serie.getNome().length() > 12) {
@@ -241,6 +275,15 @@ public class TabPreferiti extends Tab {
 
 		title = new Text(name);
 		title.setCursor(Cursor.HAND);
+		
+		title.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent me) {
+				
+				new InfoDownloadPage(Guiseries2.stage, Modality.APPLICATION_MODAL, serie);
+			}
+		});
+		
+		
 		title.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
 				// change the z-coordinate of the circle

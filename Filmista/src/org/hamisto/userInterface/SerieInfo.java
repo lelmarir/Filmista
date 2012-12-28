@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,6 +15,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -21,20 +23,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 
-import org.hamisto.database.DbPreferiti;
+import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
 
-public class SerieInfo extends GridPane{
+public class SerieInfo extends BorderPane{
 	
 	  private final String LABEL_STYLE = "-fx-text-fill: black; -fx-font-size: 14; " +
 			      "-fx-font: Gill Sans;"+
 			      "-fx-font-family: Gill Sans;"+
-	              "-fx-effect: dropshadow(one-pass-box, black, 5, 0, 1, 1);";
+	              "-fx-effect: innershadow(three-pass-box, gray, 9 , 0.5, 1, 1);";
+	                           
+	  private final String borderStyle = "-fx-effect: innershadow(three-pass-box, gray, 12 , 0.5, 1, 1);";
+	  
 	  
  public SerieInfo(final Serie serie) {
 	// TODO Auto-generated constructor stub
 	 
-	
+	 GridPane grid = new GridPane();
 	 FlowPane flow = new FlowPane(Orientation.HORIZONTAL);
 	 flow.setAlignment(Pos.TOP_LEFT);
 	 flow.setHgap(40);
@@ -46,21 +51,30 @@ public class SerieInfo extends GridPane{
      
      
      Label poster = new Label();
-    
-     ImageView image = new ImageView(serie.getPoster());
-     Image im = serie.getPoster();
-     poster.setGraphic(image);
-     
      String style_inner = 
 		      "-fx-font: Gill Sans;"+
 		      "-fx-font-family: Gill Sans;"+
-             "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
+            "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
      poster.setStyle(style_inner);
+     grid.add(poster, 0, 0, 1, 2);
+  	 final Label star = new Label();
+  	 Image stella = new Image("img/star_1.png", 30, 30, true, true, true);
+  	 star.setGraphic(new ImageView(stella));
+  	 star.setVisible(false);
+  	 
+  	
+  	
+    
+     ImageView image = new ImageView(serie.getPoster());
+     poster.setGraphic(image);
+     
+    
+
     
     // poster.setEffect(dropShadow);
     
      TextArea text = new TextArea();
-
+     
      
      text.setPrefSize(600, 160);
      text.setText(serie.getOverview());
@@ -99,19 +113,18 @@ public class SerieInfo extends GridPane{
  		    new EventHandler<MouseEvent>() {
  		        @Override public void handle(MouseEvent e) {
  		        	
- 		        	
+ 		       	star.setVisible(true);
  		        if(Preferiti.getInstance().addToPreferiti(serie) == false){
  		        	
  		        	new MyDialog(Guiseries2.stage, Modality.APPLICATION_MODAL, "Warning!",serie);
  		       
-					//Dialogs.showWarningDialog(Guiseries2.stage, serie.getNome() + " e' già presente tra i preferiti" +
-						//	"", "Warning Dialog", "");
+					
  		        }
  		        else{	
  		           
  		        	
  		        	try {
-						DbPreferiti.getInstance().addToDbPreferiti(serie);
+						FilmistaDb.getInstance().addSeriesToFilmistaDb(serie);
 					} catch (ClassNotFoundException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -125,30 +138,34 @@ public class SerieInfo extends GridPane{
  		        }
  		        }
  		});
- 	    
+ 	  
  	  flow.getChildren().add(btn);
 	  flow.getChildren().add(nome);
-	    
+	  flow.getChildren().add(star);
+	  
  	    if( Preferiti.getInstance().series.contains(serie) == true ){
  	    	
- 	    	Label star = new Label();
- 	    	Image stella = new Image("img/star_1.png", 30, 30, true, true, true);
- 	    	star.setGraphic(new ImageView(stella));
- 	    	flow.getChildren().add(star);
- 	    	
- 	    	
+ 	    	star.setVisible(true);
  	    }
  	   
- 	    
-		this.setHgap(25);
-		this.setVgap(15);
-		this.add(poster, 0, 0, 1, 2);
-		//this.add(nome, 1, 0, 1, 1);
-		this.add(flow, 1, 0);
-		this.add(text, 1, 1, 1, 1);
-		//this.setGridLinesVisible(true);
-		this.setHgrow(text, Priority.ALWAYS);
-		this.setVgrow(poster, Priority.ALWAYS);
+ 	   
+		grid.setHgap(25);
+		grid.setVgap(15);
+		grid.add(poster, 0, 0, 1, 2);
+		grid.add(flow, 1, 0);
+		grid.add(text, 1, 1, 1, 1);
+		//grid.setGridLinesVisible(true);
+		grid.setHgrow(text, Priority.ALWAYS);
+		grid.setVgrow(poster, Priority.ALWAYS);
+		
+		grid.setPadding(new Insets(25, 25, 25, 25));
+		this.setCenter(grid);
+		
+		String customCss = SerieInfo.class.getResource("CustomBorder.css").toExternalForm();
+	 	this.getStylesheets().add(customCss);
+	 	this.getStyleClass().add("custom-border");
+	 	
+		
 
 }
 

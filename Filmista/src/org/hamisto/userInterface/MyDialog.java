@@ -83,7 +83,7 @@ public class MyDialog extends Stage{
         grid.getChildren().add(flow);
         String styleText = "-fx-font: bold italic 15pt Arial";
         text.setStyle(styleText);
-        text.setText( serie.getNome() + " e' già tra i Preferiti");
+        text.setText("Questa serie e' già tra i Preferiti");
         grid.setStyle("-fx-background-color: #D0CFCF;");
         Scene scene = new Scene(grid, 300, 160);
        

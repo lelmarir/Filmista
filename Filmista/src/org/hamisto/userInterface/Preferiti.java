@@ -1,12 +1,10 @@
 package org.hamisto.userInterface;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.layout.GridPane;
 
-import org.hamisto.database.DbPreferiti;
+import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
 
 public class Preferiti extends GridPane {
@@ -23,7 +21,7 @@ public class Preferiti extends GridPane {
 	}
 
 	private Preferiti() {
-		series = DbPreferiti.getInstance().getData();
+		series = FilmistaDb.getInstance().getSeriesData();
 		
 	}
 

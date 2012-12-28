@@ -1,7 +1,5 @@
 package org.hamisto.userInterface;
 
-import java.sql.SQLException;
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
@@ -10,17 +8,15 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import org.hamisto.database.DbPreferiti;
+import org.hamisto.database.FilmistaDb;
 import org.hamisto.tabPaneFX.JFXTabPane;
 
 public class Guiseries2 extends Application {
 
-	
 	static JFXTabPane tabPane;
 	public static int count = 0;
-    static Stage stage;
-	
-	
+	static Stage stage;
+
 	public Guiseries2() {
 
 	}
@@ -28,9 +24,8 @@ public class Guiseries2 extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 
-		
 		stage = primaryStage;
-		
+
 		tabPane = new JFXTabPane();
 		// aggiungo search al Flow
 
@@ -56,17 +51,24 @@ public class Guiseries2 extends Application {
 
 			@Override
 			public void handle(WindowEvent event) {
-						primaryStage.close();
-				}
-			
+
+				FilmistaDb.getInstance().updateOrdinamentoFilmistaDb(
+						TabPreferiti.cb.getSelectionModel().getSelectedItem()
+								.toString());
+                FilmistaDb.getInstance().CloseDb();
+				primaryStage.close();
+
+			}
+
 		});
-		
+
 		primaryStage.show();
-		
+
 	}
 
 	public Parent SerieGetTab() {
-
+        
+		
 		return null;
 
 	}

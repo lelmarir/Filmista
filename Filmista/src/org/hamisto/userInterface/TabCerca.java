@@ -32,11 +32,12 @@ public class TabCerca extends Tab {
 		setImage(new Image("img/cerca.png", 70, 70, true, true,true));
 		
 		VBox mainLayout = new VBox();
+		
 		mainLayout.getStyleClass().add("tab-layout");
-
 		searchLayout = new FlowPane(Orientation.HORIZONTAL);
 		searchLayout.setAlignment(Pos.TOP_LEFT);
 		searchLayout.setHgap(0);
+		searchLayout.setPadding(new Insets(0, 0, 0, 30));
 
 		{
 			search = new org.hamisto.filmista.SearchBox();
