@@ -30,12 +30,12 @@ public class Guiseries2 extends Application {
 		// aggiungo search al Flow
 
 		// setto tabPane
-		final JFXTabPane.Tab tab1 = new TabPreferiti();
-		tabPane.addTab(tab1);
+		//final JFXTabPane.Tab tab1 = new TabPreferiti();
+		//tabPane.addTab(tab1);
 
-		JFXTabPane.Tab tab2 = new TabCerca();
-		tabPane.addTab(tab2);
-		tabPane.select(tab2);
+		//JFXTabPane.Tab tab2 = new TabCerca();
+		//tabPane.addTab(tab2);
+		//tabPane.select(tab2);
 
 		JFXTabPane.Tab tab3 = new JFXTabPane.Tab("Impostazioni");
 		tab3.setImage(new Image("img/settings.png", 70, 70, true, true, true));

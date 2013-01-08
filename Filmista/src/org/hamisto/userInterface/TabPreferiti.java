@@ -17,7 +17,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -28,18 +27,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
 
 import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
-import org.hamisto.tabPaneFX.JFXTabPane.Tab;
 
-public class TabPreferiti extends Tab {
+public class TabPreferiti extends ScrollPane{
 
-	private FlowPane mainLayout;
+	private static FlowPane mainLayout;
 	private FlowPane paneCb;
 	private BorderPane border;
-	private int lastInsertedSerieIndex = -1;
-	private int countLastAdded = 1;
+	private static int lastInsertedSerieIndex = -1;
+	private static int countLastAdded = 1;
 	private Label order;
 	@SuppressWarnings("rawtypes")
 	static ChoiceBox cb;
@@ -50,7 +51,11 @@ public class TabPreferiti extends Tab {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TabPreferiti() {
-		super("Preferiti");
+		
+		this.getStyleClass().add("tab-background");
+		this.setPrefHeight(700.0); 
+		this.setPrefWidth(1035.0);
+		//super("Preferiti");
 
 		mainLayout = new FlowPane();
 		cb = new ChoiceBox();
@@ -95,7 +100,7 @@ public class TabPreferiti extends Tab {
 
 				});
 
-		order.setTextFill(Color.BLACK);
+		order.setTextFill(Color.GREY);
 		order.setFont(Font.font("Helvetica", 16));
 		order.setText("Order By:");
 
@@ -106,8 +111,9 @@ public class TabPreferiti extends Tab {
 		paneCb.getChildren().add(cb);
 		paneCb.setPadding(new Insets(0, 20, 20, 20));
 		border.setTop(paneCb);
+		
 
-		setImage(new Image("img/preferiti.png", 70, 70, true, true, true));
+		//setImage(new Image("img/preferiti.png", 70, 70, true, true, true));
 
 		mainLayout.setOrientation(Orientation.HORIZONTAL);
 		mainLayout.setHgap(30);
@@ -116,19 +122,20 @@ public class TabPreferiti extends Tab {
 		border.setCenter(mainLayout);
 		border.setPadding(new Insets(22, 30, 30, 30));
 
-		ScrollPane sPane = new ScrollPane();
-		sPane.setContent(border);
-		sPane.setFitToWidth(true);
-		this.setLayout(sPane);
-	}
-
-	@Override
-	public void afterActivate() {
-		super.afterActivate();
+		
+		this.setContent(border);
+		this.setFitToWidth(true);
+		
 		updateTab();
 	}
 
-	public void updateTab() {
+	
+	/*public void afterActivate() {
+		
+		updateTab();
+	}*/
+
+	public static void updateTab() {
 
 		if (cb.getSelectionModel().getSelectedItem().toString()
 				.equals("Last Added") == true) {
@@ -145,7 +152,7 @@ public class TabPreferiti extends Tab {
 
 	}
 
-	private void orderBySeriesName() {
+	private static void orderBySeriesName() {
 
 		List<Serie> list = new ArrayList<Serie>();
 		List<Serie> list3 = Preferiti.getInstance().getSeries();
@@ -160,6 +167,8 @@ public class TabPreferiti extends Tab {
 				TabPreferiti.OrderByName(list);
 				mainLayout.getChildren().clear();
 				lastInsertedSerieIndex = i;
+				
+				
 				System.out.println(serie.getNome());
 				System.out.println(lastInsertedSerieIndex);
 
@@ -178,7 +187,7 @@ public class TabPreferiti extends Tab {
 		}// chiusura if
 	}
 
-	private void orderByLastAdded() {
+	private static void orderByLastAdded() {
 
 		System.out.println("ciao2");
 		List<Serie> list2 = Preferiti.getInstance().getSeries();
@@ -221,8 +230,8 @@ public class TabPreferiti extends Tab {
 	}
 
 	@SuppressWarnings("static-access")
-	private GridPane createSerieElement(final Serie serie) {
-		GridPane grid = new GridPane();
+	private static GridPane createSerieElement(final Serie serie) {
+		final GridPane grid = new GridPane();
 		grid.setVgap(20);
 
 		final Label image;
@@ -235,7 +244,7 @@ public class TabPreferiti extends Tab {
 
 		final String style_inner = "-fx-font: Gill Sans;"
 				+ "-fx-font-family: Gill Sans;"
-				+ "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
+				+ "-fx-effect: dropshadow(one-pass-box, gray, 8, 0, 4, 4);";
 
 		final String style_inner2 = "-fx-effect: dropshadow(one-pass-box, gray, 12, 0, 8, 8);";
 
@@ -274,12 +283,28 @@ public class TabPreferiti extends Tab {
 		}
 
 		title = new Text(name);
+		title.setFill(Color.WHITE);
 		title.setCursor(Cursor.HAND);
 		
 		title.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
 				
-				new InfoDownloadPage(Guiseries2.stage, Modality.APPLICATION_MODAL, serie);
+				/*for(int i = 0; i < serie.getStagioni().size(); i++){
+					
+					
+					CreateEpisodesDetail episodi= new CreateEpisodesDetail(serie, serie.getStagioni().get(i).getNumero());
+					System.out.println("Episodi stagione " + serie.getStagioni().get(i).getNumero() + " :");
+					
+					for(int j = 0; j < episodi.getEpisodiStagione().size(); j++)
+					System.out.println(episodi.getEpisodiStagione().get(j).getEpisodeName());
+					
+					System.out.println("\n\n\n\n");
+				}*/
+				//
+				Popup pop = new Popup();
+		      
+			    pop.show(image, 200, 200);
+		          // new InfoDownloadPage(Guiseries2.stage, Modality.APPLICATION_MODAL, serie);
 			}
 		});
 		
@@ -288,14 +313,17 @@ public class TabPreferiti extends Tab {
 			public void handle(MouseEvent me) {
 				// change the z-coordinate of the circle
 				title.setUnderline(true);
-				title.setFill(Color.GRAY);
+				title.setFill(Color.WHITE);
 			}
 		});
-
+        
+		
+	
+		
 		title.setOnMouseExited(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
 				title.setUnderline(false);
-				title.setFill(Color.BLACK);
+				title.setFill(Color.WHITE);
 			}
 		});
 		title.setFont(javafx.scene.text.Font.font("Arial", FontWeight.BOLD, 16));

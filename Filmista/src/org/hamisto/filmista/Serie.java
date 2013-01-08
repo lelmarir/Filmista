@@ -359,6 +359,7 @@ public class Serie {
 		try {
 			u = new URL("http://www.thetvdb.com/api/55D4BDC0A1305510/series/"
 					+ this.getId() + "/all/en.xml");
+		
 			InputStream is = u.openStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
@@ -399,6 +400,7 @@ public class Serie {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 		return this.stagioni;
 

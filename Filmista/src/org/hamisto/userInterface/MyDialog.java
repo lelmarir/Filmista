@@ -2,6 +2,8 @@ package org.hamisto.userInterface;
 
 
 
+import java.io.File;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -14,13 +16,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import org.hamisto.filmista.Serie;
 
 public class MyDialog extends Stage{
-
+     
+	
+	 
 	public MyDialog(Stage stage, Modality applicationModal, String title, Serie serie) {
 		// TODO Auto-generated constructor stub
 		//super();
@@ -88,6 +93,12 @@ public class MyDialog extends Stage{
         Scene scene = new Scene(grid, 300, 160);
        
         setScene(scene);
+        
+        File file = new File("/Users/mohamedchajii/Documents/workspace2/Filmista/Filmista/src" +
+        		"/org/hamisto/userInterface/Basso.aiff");
+        AudioClip AlertSound = new AudioClip(file.toURI().toString());
+        AlertSound.play();
+        
         show();
 		
 	}

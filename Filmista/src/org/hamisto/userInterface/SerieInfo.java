@@ -56,9 +56,9 @@ public class SerieInfo extends BorderPane{
 		      "-fx-font-family: Gill Sans;"+
             "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
      poster.setStyle(style_inner);
-     grid.add(poster, 0, 0, 1, 2);
+    
   	 final Label star = new Label();
-  	 Image stella = new Image("img/star_1.png", 30, 30, true, true, true);
+  	 Image stella = new Image("img/greentick.png", 35, 35, true, true, true);
   	 star.setGraphic(new ImageView(stella));
   	 star.setVisible(false);
   	 
@@ -71,7 +71,7 @@ public class SerieInfo extends BorderPane{
     
 
     
-    // poster.setEffect(dropShadow);
+   
     
      TextArea text = new TextArea();
      
@@ -114,10 +114,11 @@ public class SerieInfo extends BorderPane{
  		        @Override public void handle(MouseEvent e) {
  		        	
  		       	star.setVisible(true);
+ 		
  		        if(Preferiti.getInstance().addToPreferiti(serie) == false){
  		        	
  		        	new MyDialog(Guiseries2.stage, Modality.APPLICATION_MODAL, "Warning!",serie);
- 		       
+ 		        
 					
  		        }
  		        else{	
@@ -142,9 +143,14 @@ public class SerieInfo extends BorderPane{
  	  flow.getChildren().add(btn);
 	  flow.getChildren().add(nome);
 	  flow.getChildren().add(star);
+	 // flow.setMargin(star,new Insets(0, 0, 10, 0));
+	 
+	 
+	  
 	  
  	    if( Preferiti.getInstance().series.contains(serie) == true ){
  	    	
+ 	    	btn.setText("In Lista");
  	    	star.setVisible(true);
  	    }
  	   
@@ -153,8 +159,10 @@ public class SerieInfo extends BorderPane{
 		grid.setVgap(15);
 		grid.add(poster, 0, 0, 1, 2);
 		grid.add(flow, 1, 0);
+		 
+	
 		grid.add(text, 1, 1, 1, 1);
-		//grid.setGridLinesVisible(true);
+		grid.setGridLinesVisible(true);
 		grid.setHgrow(text, Priority.ALWAYS);
 		grid.setVgrow(poster, Priority.ALWAYS);
 		

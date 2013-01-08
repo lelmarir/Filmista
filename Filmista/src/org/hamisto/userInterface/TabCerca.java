@@ -9,7 +9,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
@@ -17,10 +16,9 @@ import javafx.scene.layout.VBox;
 
 import org.hamisto.filmista.Serie;
 import org.hamisto.filmista.SerieWorkerListener;
-import org.hamisto.tabPaneFX.JFXTabPane.Tab;
 import org.hamisto.userInterface.WorkMonitor.WorkListener;
 
-public class TabCerca extends Tab {
+public class TabCerca extends ScrollPane {
 
 	FlowPane searchLayout;// Panel a cui aggiungo la text e la progress bar
 	org.hamisto.filmista.SearchBox search;// Barra di ricerca
@@ -28,12 +26,17 @@ public class TabCerca extends Tab {
 	VBox seriesContainer;
 	
 	public TabCerca() {
-		super("Cerca");
-		setImage(new Image("img/cerca.png", 70, 70, true, true,true));
+		
+		this.getStyleClass().add("tab-layout");
+		
 		
 		VBox mainLayout = new VBox();
+		search = new org.hamisto.filmista.SearchBox();
+		search.getStylesheets().add("search-box");
 		
-		mainLayout.getStyleClass().add("tab-layout");
+	  
+		this.getStyleClass().add("cerca-background");
+		
 		searchLayout = new FlowPane(Orientation.HORIZONTAL);
 		searchLayout.setAlignment(Pos.TOP_LEFT);
 		searchLayout.setHgap(0);
@@ -54,6 +57,7 @@ public class TabCerca extends Tab {
 		}
 		searchLayout.getChildren().add(search);
 		proIn = new ProgressIndicator();
+	
 		proIn.setPrefSize(40, 40);
 		proIn.setTranslateY(8);
 		proIn.setVisible(false);
@@ -64,9 +68,8 @@ public class TabCerca extends Tab {
 		seriesContainer.setPadding(new Insets(25, 25, 25, 25));
 		mainLayout.getChildren().add(seriesContainer);
 		
-		ScrollPane sPane = new ScrollPane();
-		sPane.setContent(mainLayout);
-		this.setLayout(sPane);
+		this.setContent(mainLayout);
+	
 		
 	}
 
