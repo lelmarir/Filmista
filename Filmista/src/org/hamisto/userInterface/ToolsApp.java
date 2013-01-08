@@ -191,7 +191,10 @@ public class ToolsApp extends Application {
 					
 					if (arg0.getCode() == KeyCode.UP
 							|| arg0.getCode() == KeyCode.DOWN) {
+						
+						
 						button.setSelected(true);
+						
 						switchTool(tool, index);
 
 					}
