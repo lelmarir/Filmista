@@ -143,7 +143,7 @@ public class SerieInfo extends BorderPane{
  	  flow.getChildren().add(btn);
 	  flow.getChildren().add(nome);
 	  flow.getChildren().add(star);
-	 // flow.setMargin(star,new Insets(0, 0, 10, 0));
+	  flow.setMargin(star,new Insets(0, 0, 10, 0));
 	 
 	 
 	  
