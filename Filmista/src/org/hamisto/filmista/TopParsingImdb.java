@@ -23,9 +23,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Tidy;
 
 public class TopParsingImdb {
-    
+
 	List<String> Top;
-	
+
 	static TopParsingImdb instance;
 
 	public static TopParsingImdb getInstance() {
@@ -34,14 +34,11 @@ public class TopParsingImdb {
 		}
 		return instance;
 	}
-	
-    
 
 	TopParsingImdb() {
-		
+
 		Top = new ArrayList<String>();
 		URI url = null;
-		
 
 		{
 
@@ -54,7 +51,7 @@ public class TopParsingImdb {
 			}
 
 			try {
-				System.out.println(url);
+			
 				final int CONNECTION_TIMEOUT = 20000;
 
 				HttpParams httpparams = new BasicHttpParams();
@@ -67,7 +64,7 @@ public class TopParsingImdb {
 				HttpConnectionParams.setSoTimeout(httpparams,
 						CONNECTION_TIMEOUT);
 				DefaultHttpClient httpclient = new DefaultHttpClient(httpparams);
-				
+
 				// Spoof Firefox user agent to force a result from The Pirate
 				// Bay
 				httpclient
@@ -94,7 +91,6 @@ public class TopParsingImdb {
 
 				XPath xPath = factory.newXPath();
 				String pattern = "//tr[position()< 12]/td[@class='title']/a/@href[1]";
-				
 
 				NodeList nodes = null;
 				try {
@@ -106,11 +102,17 @@ public class TopParsingImdb {
 				}
 				System.out.println(nodes.getLength());
 				for (int i = 0; i < nodes.getLength(); i++) {
-                    
-					//add element to Top List
-					Top.add(nodes.item(i).getNodeValue().toString());
-					System.out.println(nodes.item(i).getNodeValue().toString());
 
+					// add element to Top List
+					Top.add(nodes
+							.item(i)
+							.getNodeValue()
+							.toString()
+							.substring(
+									7,
+									nodes.item(i).getNodeValue().toString()
+											.length() - 1));
+					
 				}
 
 			} catch (IOException e) {
@@ -119,11 +121,10 @@ public class TopParsingImdb {
 			}
 		}
 	}
-	
+
 	public List<String> getTop() {
 		return Top;
 	}
-
 
 	public void setTop(List<String> top) {
 		Top = top;

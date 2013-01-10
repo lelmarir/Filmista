@@ -138,7 +138,7 @@ public class Serie {
 
 		monitor.setMaxWork(1 + idNodeList.getLength() * 2);
 		List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
-		for (int i = 0; i <= idNodeList.getLength(); i++) {// stampa tutti nomi
+		for (int i = 0; (i <= idNodeList.getLength()) && (i < 14); i++) {// stampa tutti nomi
 															// e descrizione
 
 			if (idNodeList.item(i) != null && nameNode.item(i) != null

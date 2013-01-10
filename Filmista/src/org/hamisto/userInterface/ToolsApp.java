@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -66,26 +68,43 @@ public class ToolsApp extends Application {
 	private Tool nextTool = null;
 	private int nextToolIndex;
 	private DoubleProperty arrowH = new SimpleDoubleProperty(200);
-	
-	
+
+	// thread
+	private static ExecutorService executorPool;
+
+	// get per il thread
+	private static ExecutorService getThreadPool() {
+		if (executorPool == null) {
+			executorPool = Executors.newFixedThreadPool(10);
+		}
+
+		return executorPool;
+
+	}
+
+	private static void clearExecutorPool() {
+		executorPool = null;
+	}
+
 	static Stage stage;
 
 	private Tool[] tools;
 
-	
-	static Stage GetStage(){
-		
+	static Stage GetStage() {
+
 		return ToolsApp.stage;
-		
-		
+
 	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	@Override
 	public void start(final Stage primaryStage) throws IOException {
-
+        
+	
+		
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 			@Override
@@ -188,13 +207,11 @@ public class ToolsApp extends Application {
 			button.setOnKeyReleased(new EventHandler<KeyEvent>() {
 				@Override
 				public void handle(KeyEvent arg0) {
-					
+
 					if (arg0.getCode() == KeyCode.UP
 							|| arg0.getCode() == KeyCode.DOWN) {
-						
-						
+
 						button.setSelected(true);
-						
 						switchTool(tool, index);
 
 					}
@@ -204,9 +221,12 @@ public class ToolsApp extends Application {
 			button.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent t) {
+
+					button.setSelected(true);
 					switchTool(tool, index);
-					TabPreferiti.updateTab();
+
 				}
+
 			});
 			toolBar.getChildren().add(button);
 		}
@@ -228,7 +248,7 @@ public class ToolsApp extends Application {
 								ToolsApp.class.getResource("Tools.css")
 										.toString()).build());
 		primaryStage.show();
-		
+
 		ToolsApp.stage = primaryStage;
 	}
 
@@ -254,6 +274,7 @@ public class ToolsApp extends Application {
 	}
 
 	public void switchTool(Tool newTool, final int toolIndex) {
+
 		// check if existing animation running
 		if (timeline != null) {
 			nextTool = newTool;
@@ -278,10 +299,12 @@ public class ToolsApp extends Application {
 			@Override
 			public void run() {
 				// animate switch
-				if (toolIndex > currentToolIndex) { // animate from bottom
-					currentToolIndex = toolIndex;
-					sparePane.setTranslateY(root.getHeight());
+				if ((toolIndex > currentToolIndex)) { // animate from bottom
+
 					sparePane.setVisible(true);
+					currentToolIndex = toolIndex;
+					sparePane.setTranslateY(-root.getHeight());
+
 					timeline = TimelineBuilder
 							.create()
 							.keyFrames(
@@ -292,42 +315,76 @@ public class ToolsApp extends Application {
 											new KeyValue(sparePane
 													.translateYProperty(), root
 													.getHeight(), interpolator)),
-									new KeyFrame(Duration.millis(300),
+									new KeyFrame(Duration.millis(800),
 											animationEndEventHandler,
 											new KeyValue(currentPane
 													.translateYProperty(),
 													-root.getHeight(),
 													interpolator),
-											new KeyValue(sparePane
-													.translateYProperty(), 0,
-													interpolator))).build();
-					timeline.play();
-				} else { // from top
-					currentToolIndex = toolIndex;
-					sparePane.setTranslateY(-root.getHeight());
-					sparePane.setVisible(true);
-					timeline = TimelineBuilder
-							.create()
-							.keyFrames(
-									new KeyFrame(Duration.millis(0),
-											new KeyValue(currentPane
-													.translateYProperty(), 0,
-													interpolator),
-											new KeyValue(sparePane
-													.translateYProperty(),
-													-root.getHeight(),
-													interpolator)),
-									new KeyFrame(
-											Duration.millis(300),
-											animationEndEventHandler,
-											new KeyValue(currentPane
-													.translateYProperty(), root
-													.getHeight(), interpolator),
 											new KeyValue(sparePane
 													.translateYProperty(), 0,
 													interpolator))).build();
 					timeline.play();
 				}
+
+				else if ((toolIndex < currentToolIndex)) { // from top
+					{
+		
+								currentToolIndex = toolIndex;
+								sparePane.setTranslateY(-root.getHeight());
+								sparePane.setVisible(true);
+								timeline = TimelineBuilder
+										.create()
+										.keyFrames(
+												new KeyFrame(
+														Duration.millis(0),
+														new KeyValue(
+																currentPane
+																		.translateYProperty(),
+																0, interpolator),
+														new KeyValue(
+																sparePane
+																		.translateYProperty(),
+																-root.getHeight(),
+																interpolator)),
+												new KeyFrame(
+														Duration.millis(800),
+														animationEndEventHandler,
+														new KeyValue(
+																currentPane
+																		.translateYProperty(),
+																root.getHeight(),
+																interpolator),
+														new KeyValue(
+																sparePane
+																		.translateYProperty(),
+																0, interpolator)))
+										.build();
+								timeline.play();
+
+							}
+						}
+				
+
+					
+
+		
+
+				else {
+
+					currentToolIndex = toolIndex;
+
+					currentPane.getChildren().add(
+							tools[currentToolIndex].getContent());
+					sparePane.setCache(true);
+					currentPane.setCache(true);
+					currentPane.setVisible(true);
+
+					timeline = null;
+					// currentToolIndex = toolIndex;
+
+				}
+			
 			}
 		});
 	}
@@ -353,7 +410,9 @@ public class ToolsApp extends Application {
 			}
 			// check if we have a animation waiting
 			if (nextTool != null) {
+
 				switchTool(nextTool, nextToolIndex);
+
 			}
 		}
 	};

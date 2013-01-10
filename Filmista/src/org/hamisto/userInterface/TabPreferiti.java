@@ -16,6 +16,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,13 +27,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
-import javafx.stage.Stage;
 
 import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
+
 
 public class TabPreferiti extends ScrollPane{
 
@@ -44,6 +43,7 @@ public class TabPreferiti extends ScrollPane{
 	private Label order;
 	@SuppressWarnings("rawtypes")
 	static ChoiceBox cb;
+	
 
 	static boolean updatedb = false;
 
@@ -51,6 +51,7 @@ public class TabPreferiti extends ScrollPane{
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TabPreferiti() {
+		
 		
 		this.getStyleClass().add("tab-background");
 		this.setPrefHeight(700.0); 
@@ -249,30 +250,84 @@ public class TabPreferiti extends ScrollPane{
 		final String style_inner2 = "-fx-effect: dropshadow(one-pass-box, gray, 12, 0, 8, 8);";
 
 		image = new Label();
-		image.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		final Tooltip tooltip = new Tooltip(serie.getNome());
+		//tooltip.show(image, (e.getScreenX() ), (e.getScreenY() + 15.0));
+		
+		
+		image.addEventHandler(MouseEvent.MOUSE_ENTERED,
+				new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				
+			
+					
+				 System.out.println("Sto entrando con il mouse");
+				
+				
 				image.setScaleX(1.115);
 				image.setScaleY(1.115);
 				image.setStyle(style_inner2);
+				image.setCursor(Cursor.HAND);
+				
 
 			}
 		});
-
-		image.setOnMouseExited(new EventHandler<MouseEvent>() {
+		
+	
+		image.addEventHandler(MouseEvent.MOUSE_MOVED,
+				new EventHandler<MouseEvent>() {
+			
+	  @Override
+      public void handle(MouseEvent e) {
+				
+		
+			 
+	
+		 
+		 
+			  
+		  System.out.println("Sto muovendo il mouse");
+			  tooltip.hide();
+		  }
+				
+				
+				
+			
+		});
+			
+		image.addEventHandler(MouseEvent.MOUSE_RELEASED,
+				new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				
+				System.out.println("Mouse rilasciato:" + e.getScreenX()+""+ e.getSceneX());
+				
+				
+				
+			}
+		});
+
+		image.addEventHandler(MouseEvent.MOUSE_EXITED,
+				new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				
+				tooltip.hide();
 				image.setScaleX(1);
 				image.setScaleY(1);
 				image.setStyle(style_inner);
+				System.out.println("Sto uscendo con il mouse");
+				
+				
 			}
 		});
-		// image.setTooltip(new Tooltip("More Information..."));
+		
 		image.setGraphic(new ImageView(serie.getPoster()));
 		// image.setEffect(dropShadow);
+		
 
 		image.setStyle(style_inner);
-		image.setCursor(Cursor.HAND);
+		
 
 		if (serie.getNome().length() > 12) {
 			name = serie.getNome().substring(0, 11);
@@ -285,6 +340,7 @@ public class TabPreferiti extends ScrollPane{
 		title = new Text(name);
 		title.setFill(Color.WHITE);
 		title.setCursor(Cursor.HAND);
+		
 		
 		title.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
@@ -314,6 +370,7 @@ public class TabPreferiti extends ScrollPane{
 				// change the z-coordinate of the circle
 				title.setUnderline(true);
 				title.setFill(Color.WHITE);
+				image.setTooltip(new Tooltip(serie.getNome()));
 			}
 		});
         
@@ -324,6 +381,7 @@ public class TabPreferiti extends ScrollPane{
 			public void handle(MouseEvent me) {
 				title.setUnderline(false);
 				title.setFill(Color.WHITE);
+				//image.getTooltip().requestFocus();
 			}
 		});
 		title.setFont(javafx.scene.text.Font.font("Arial", FontWeight.BOLD, 16));
@@ -331,6 +389,8 @@ public class TabPreferiti extends ScrollPane{
 		grid.add(image, 0, 0);
 		grid.setHalignment(title, HPos.CENTER);
 		grid.add(title, 0, 1);
+		
+		
 
 		return grid;
 	}

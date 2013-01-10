@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import org.hamisto.filmista.Serie;
@@ -131,7 +132,7 @@ public class TabCerca extends ScrollPane {
 
 			}
 		}, monitor);
-
+		
 	}
 }
 
