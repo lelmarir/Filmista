@@ -195,7 +195,7 @@ public class TopSeries extends VBox{
 		    poster.setOnMouseExited(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent me) {
 					
-				    popup.hide();
+				   // popup.hide();
 				    poster.setCursor(null);
 				    poster.setEffect(null);
 				    
