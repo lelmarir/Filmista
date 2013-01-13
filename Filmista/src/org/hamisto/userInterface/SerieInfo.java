@@ -152,7 +152,7 @@ public class SerieInfo extends BorderPane {
 
 		grid.getColumnConstraints().add(0, new ColumnConstraints());
 		grid.getColumnConstraints().add(1, new ColumnConstraints());
-		grid.getColumnConstraints().add(2, new ColumnConstraints(200));
+		grid.getColumnConstraints().add(2, new ColumnConstraints(150));
 
 		// grid.setGridLinesVisible(true);
 		grid.setHgrow(text, Priority.ALWAYS);

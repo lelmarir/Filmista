@@ -17,9 +17,11 @@ public class TopElement {
 	private String status;
 	private String rating;
 	private Image poster;
+	private String idImdb;
 	
 	
-	
+
+
 	public TopElement() {
 		// TODO Auto-generated constructor stub
 	}
@@ -82,5 +84,14 @@ public class TopElement {
 	}
 	
 	
-	
+	public String getIdImdb() {
+		return idImdb;
+	}
+
+
+
+	public void setIdImdb(String idImdb) {
+		this.idImdb = idImdb;
+	}
+
 }

@@ -6,6 +6,8 @@ package org.hamisto.userInterface;
 
 import java.io.File;
 
+import org.hamisto.database.FilmistaDb;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -46,15 +48,15 @@ public class TabImpostazioni extends VBox{
 	private VBox nameSetting;
 	
 	
-    private final TextField downloadPath;
+    public static TextField downloadPath;
 	private final Button browse;
-	private final DirectoryChooser chooser;
-	private Text downloadSettings;
-	private CheckBox seriesFolder;
-	private final RadioButton enableDirectoryChooser;
-	private CheckBox seasonFolder;
+	public static DirectoryChooser chooser;
+	static Text downloadSettings;
+	public static CheckBox seriesFolder;
+	public static RadioButton enableDirectoryChooser;
+	public static CheckBox seasonFolder;
 	private final ToggleGroup groupDownload;
-	private final RadioButton disableDirectoryChooser;
+	public static RadioButton disableDirectoryChooser;
 	private Line lineDownload;
 	private GridPane gridDownload;
 	
@@ -69,8 +71,8 @@ public class TabImpostazioni extends VBox{
 	private final Label enFlag;
 	private final Label itaFlag;
 	private final ToggleGroup langGroup;
-    private final RadioButton english;
-    private final RadioButton italian;
+    public static  RadioButton english;
+    static  RadioButton italian;
     
     
     //lanConfig
@@ -80,24 +82,30 @@ public class TabImpostazioni extends VBox{
     
     
     
-    private Text lanConfig;
+    public static Text lanConfig;
     private Line lanLine;
-    private CheckBox checkLanConfig;
+    public static CheckBox checkLanConfig;
     private Label customConfig;
-    private Text porta;
-    private TextField fieldPorta;
+    public static Text porta;
+    public static TextField fieldPorta;
     private Text indirizzo;
-    private TextField fieldIndirizzo;
+    public static TextField fieldIndirizzo;
     private final GridPane configGrid;
     
     
 	public TabImpostazioni() {
-
+         
+		
+		
 		// TODO Auto-generated method stub
 
 		this.setSpacing(50);
 		this.setPadding(new Insets(40));
 		this.getStyleClass().add("tab-background");
+		
+		
+		
+		
 		
 		//Download Configuration
 
@@ -106,7 +114,8 @@ public class TabImpostazioni extends VBox{
 		
 		
 	    chooser = new DirectoryChooser();
-		chooser.setInitialDirectory(new File("/Users/mohamedchajii/Downloads/"));
+	    
+		/*************/
 		chooser.initialDirectoryProperty();
 		chooser.setTitle("JavaFX Projects");
 		
@@ -118,11 +127,11 @@ public class TabImpostazioni extends VBox{
 
 	    downloadPath = new TextField("");
 		downloadPath.setStyle(LABEL_STYLE);
-		downloadPath.setEditable(false);
+		downloadPath.setEditable(true);
 		downloadPath.setFocusTraversable(false);
 		downloadPath.setPrefWidth(400);
 		downloadPath.setPrefHeight((downloadPath.getHeight() + 24));
-		downloadPath.setText(chooser.getInitialDirectory().toString());
+
 		
 		
 		downloadSettings = new Text("Downloads");
@@ -132,7 +141,7 @@ public class TabImpostazioni extends VBox{
 		
 		seriesFolder = new CheckBox("Create a folder for each Series");
 		//seriesFolder.setStyle("-fx-text-fill: black");
-		seriesFolder.setSelected(true);
+		/************/
 		seriesFolder.setFocusTraversable(false);
 		
 		
@@ -142,17 +151,18 @@ public class TabImpostazioni extends VBox{
 		enableDirectoryChooser = new RadioButton("Save files to :");
 		//enableDirectoryChooser.setStyle("-fx-text-fill: black");
 		enableDirectoryChooser.setFocusTraversable(false);
-		enableDirectoryChooser.setSelected(true);
-		enableDirectoryChooser.setToggleGroup(groupDownload);
+		/****************/
+
 		
 		
 		disableDirectoryChooser = new RadioButton(
 				"Always ask me where to save files");
 		disableDirectoryChooser.setFocusTraversable(false);
-		disableDirectoryChooser.setToggleGroup(groupDownload);
+		
 		
 		
 	    seasonFolder = new CheckBox("Create a folder for each Season");
+	       /*********/
 		seasonFolder.setFocusTraversable(false);
 		
 		lineDownload = new Line(400, 0, 0, 0);
@@ -191,7 +201,157 @@ public class TabImpostazioni extends VBox{
 
 		
 		
+
+		// Language
+		
+		language = new Text("Language");
+		language.getStyleClass().add("text-items");
+		language.setFill(Color.GREY);
+		
+		languageLine = new Line(400, 0, 0, 0);
+		languageLine.setFill(null);
+		languageLine.setStroke(Color.GREY);
+		languageLine.setStrokeWidth(1);
+		languageLine.setStrokeLineCap(StrokeLineCap.BUTT);
+
+		selectLanguage = new Label();
+		selectLanguage.setText("Select Language for TvDb information: ");
+		//selectLanguage.setStyle("-fx-text-fill: black");
+		
+		enFlag = new Label();
+		enFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
+				.getResourceAsStream("images/images.png"), 40, 40, true, true)));
+		itaFlag = new Label();
+		itaFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
+				.getResourceAsStream("images/Italy_flag.gif"), 40, 40, true,
+				true)));
+		
+	    langGroup = new ToggleGroup();
+		
+		english = new RadioButton();
+		english.setFocusTraversable(false);
+		 /*********/
+		
+	    italian = new RadioButton();
+		italian.setFocusTraversable(false);
+		
 	
+		vboxLanguage = new VBox();
+		flowLanguage = new FlowPane(Orientation.HORIZONTAL);
+		flowLanguage.setHgap(10);
+		
+		
+		
+		flowLanguage.getChildren().add(selectLanguage);
+		flowLanguage.getChildren().add(english);
+		flowLanguage.getChildren().add(enFlag);
+		flowLanguage.getChildren().add(italian);
+		flowLanguage.setMargin(italian, new Insets(0, 0, 0, 90));
+		flowLanguage.getChildren().add(itaFlag);
+        
+		
+		vboxLanguage.getChildren().addAll(language, languageLine);
+		vboxLanguage.getChildren().add(flowLanguage);
+		vboxLanguage.setMargin(flowLanguage, new Insets(40, 0, 0, 0));
+		
+		
+	
+
+		// Lan Configuration
+		
+		lanConfig = new Text("Lan Configuration");
+		lanConfig.getStyleClass().add("text-items");
+		lanConfig.setFill(Color.GREY);
+		
+		
+		lanLine = new Line(400, 0, 0, 0);
+		lanLine.setFill(null);
+		lanLine.setStroke(Color.GREY);
+		lanLine.setStrokeWidth(1);
+		lanLine.setStrokeLineCap(StrokeLineCap.BUTT);
+	
+
+		checkLanConfig = new CheckBox();
+		checkLanConfig.setFocusTraversable(false);
+		  /**********/
+		
+		customConfig = new Label("Custom Configuration");
+		
+
+		
+		
+		porta = new Text("Port: ");
+		porta.setFill(Color.WHITE);
+		
+		fieldPorta = new TextField();
+		/********/
+		fieldPorta.setMaxWidth(100);
+		fieldPorta.setMinHeight((fieldPorta.getHeight() + 20));
+		fieldPorta.setStyle(LABEL_STYLE);
+
+		indirizzo = new Text("Address: ");
+		indirizzo.setFill(Color.WHITE);
+
+		fieldIndirizzo = new TextField();
+		/**********/
+		fieldIndirizzo.setMinHeight((fieldIndirizzo.getHeight() + 20));
+		fieldIndirizzo.setStyle(LABEL_STYLE);
+		fieldIndirizzo.setMaxWidth(300);
+
+		
+		
+		
+		flowLanConfig = new FlowPane(Orientation.HORIZONTAL);
+		flowLanConfig.setHgap(10);
+		flowLanConfig.getChildren().addAll(checkLanConfig, customConfig);
+		
+		configGrid = new GridPane();
+		configGrid.setHgap(15);
+		configGrid.setVgap(15);
+		configGrid.setVgrow(fieldPorta, Priority.ALWAYS);
+		configGrid.setHgrow(fieldIndirizzo, Priority.ALWAYS);
+		configGrid.add(porta, 0, 0);
+		configGrid.add(fieldPorta, 1, 0);
+		configGrid.add(indirizzo, 0, 1);
+		configGrid.add(fieldIndirizzo, 1, 1);
+		
+		
+		vboxLanCofing = new VBox();
+		vboxLanCofing.getChildren().addAll(lanConfig, lanLine);
+		vboxLanCofing.getChildren().add(flowLanConfig);
+		vboxLanCofing.setMargin(flowLanConfig, new Insets(40, 0, 0, 0));
+		vboxLanCofing.getChildren().add(configGrid);
+		vboxLanCofing.setMargin(configGrid, new Insets(20, 0, 20, 40));
+
+		
+         //Db code
+		
+	
+		if (FilmistaDb.getInstance().numbRecordSettings() == 0){
+			
+			
+			chooser.setInitialDirectory(new File(System.getProperty("user.home")+"/Downloads"));
+			downloadPath.setText(chooser.getInitialDirectory().toString());
+			seriesFolder.setSelected(true);
+			enableDirectoryChooser.setSelected(true);
+			seasonFolder.setSelected(true); 
+			english.setSelected(true);
+			checkLanConfig.setSelected(false); 
+			fieldIndirizzo.setText("http://localhost:9091/transmission/web/");
+			fieldPorta.setText("9091");
+			
+		}
+		else {
+			FilmistaDb.getInstance().setTabSettings();
+			downloadPath.setText(chooser.getInitialDirectory().toString());	
+		}
+		//Download events
+		english.setToggleGroup(langGroup);
+		italian.setToggleGroup(langGroup);
+		enableDirectoryChooser.setToggleGroup(groupDownload);
+		disableDirectoryChooser.setToggleGroup(groupDownload);
+		
+		
 		
 		
 		browse.addEventHandler(MouseEvent.MOUSE_CLICKED,
@@ -236,7 +396,19 @@ public class TabImpostazioni extends VBox{
 
 		
 		
-
+       if(enableDirectoryChooser.isSelected()){
+    	   
+    	   browse.setDisable(false);
+		   downloadPath.setDisable(false);
+       }
+       
+       else{
+    	   
+    	   groupDownload.selectToggle(disableDirectoryChooser);
+    	   browse.setDisable(true);
+		   downloadPath.setDisable(true);
+    	   
+       }
 
 
 		
@@ -263,77 +435,32 @@ public class TabImpostazioni extends VBox{
 				});
 
 
-		
-
-		
+		//Language events
 		
 		
-
-		// Language
+        if(english.isSelected() == true){
+		    
+        	
+        	
+			itaFlag.setDisable(true);
+			
+		}
 		
-		language = new Text("Language");
-		language.getStyleClass().add("text-items");
-		language.setFill(Color.GREY);
-		
-		languageLine = new Line(400, 0, 0, 0);
-		languageLine.setFill(null);
-		languageLine.setStroke(Color.GREY);
-		languageLine.setStrokeWidth(1);
-		languageLine.setStrokeLineCap(StrokeLineCap.BUTT);
-
-		selectLanguage = new Label();
-		selectLanguage.setText("Select Language for TvDb information: ");
-		//selectLanguage.setStyle("-fx-text-fill: black");
-		
-		enFlag = new Label();
-		enFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
-				.getResourceAsStream("images/images.png"), 40, 40, true, true)));
-		itaFlag = new Label();
-		itaFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
-				.getResourceAsStream("images/Italy_flag.gif"), 40, 40, true,
-				true)));
-		
-	    langGroup = new ToggleGroup();
-		
-		english = new RadioButton();
-		english.setToggleGroup(langGroup);
-		english.setFocusTraversable(false);
-		
-	    italian = new RadioButton();
-		italian.setFocusTraversable(false);
-		italian.setToggleGroup(langGroup);
-		
-		
-
-	
-
-		vboxLanguage = new VBox();
-		flowLanguage = new FlowPane(Orientation.HORIZONTAL);
-		flowLanguage.setHgap(10);
-		
-		
-		
-		flowLanguage.getChildren().add(selectLanguage);
-		flowLanguage.getChildren().add(english);
-		flowLanguage.getChildren().add(enFlag);
-		flowLanguage.getChildren().add(italian);
-		flowLanguage.setMargin(italian, new Insets(0, 0, 0, 90));
-		flowLanguage.getChildren().add(itaFlag);
+		else{
+			
+			langGroup.selectToggle(italian);
+			enFlag.setDisable(true);
+			
+		}
+	    
         
-		
-		vboxLanguage.getChildren().addAll(language, languageLine);
-		vboxLanguage.getChildren().add(flowLanguage);
-		vboxLanguage.setMargin(flowLanguage, new Insets(40, 0, 0, 0));
-		
-		
-		
-		
-		
-		
-		langGroup.selectedToggleProperty().addListener(
+        
+        langGroup.selectedToggleProperty().addListener(
 				new ChangeListener<Toggle>() {
 					public void changed(ObservableValue<? extends Toggle> ov,
 							Toggle old_toggle, Toggle new_toggle) {
+						
+						
 						if (langGroup.getSelectedToggle() != null) {
 
 							if (langGroup.getSelectedToggle().equals(english)) {
@@ -351,52 +478,16 @@ public class TabImpostazioni extends VBox{
 						}
 					}
 				});
-
-		// Lan Configuration
-		
-		lanConfig = new Text("Lan Configuration");
-		lanConfig.getStyleClass().add("text-items");
-		lanConfig.setFill(Color.GREY);
+        
+        
+        //Lan Events
 		
 		
-		lanLine = new Line(400, 0, 0, 0);
-		lanLine.setFill(null);
-		lanLine.setStroke(Color.GREY);
-		lanLine.setStrokeWidth(1);
-		lanLine.setStrokeLineCap(StrokeLineCap.BUTT);
-	
-
-		checkLanConfig = new CheckBox();
-		checkLanConfig.setFocusTraversable(false);
-		
-		customConfig = new Label("Custom Configuration");
-		
-
-		
-		
-		porta = new Text("Port: ");
-		porta.setFill(Color.WHITE);
-		
-		fieldPorta = new TextField();
-		fieldPorta.setMaxWidth(100);
-		fieldPorta.setMinHeight((fieldPorta.getHeight() + 20));
-		fieldPorta.setStyle(LABEL_STYLE);
-
-		indirizzo = new Text("Address: ");
-		indirizzo.setFill(Color.WHITE);
-
-		fieldIndirizzo = new TextField();
-		fieldIndirizzo.setMinHeight((fieldIndirizzo.getHeight() + 20));
-		fieldIndirizzo.setStyle(LABEL_STYLE);
-		fieldIndirizzo.setMaxWidth(200);
-
-		
-
-		checkLanConfig.selectedProperty().addListener(
+        checkLanConfig.selectedProperty().addListener(
 				new ChangeListener<Boolean>() {
 					public void changed(ObservableValue ov, Boolean old_val,
 							Boolean new_val) {
-
+              
 						if (new_val) {
 
 							configGrid.setDisable(false);
@@ -410,23 +501,21 @@ public class TabImpostazioni extends VBox{
 					}
 				});
         
+        
+        
+
+		if (checkLanConfig.isSelected()) {
+            
+			configGrid.setDisable(false);
+		}
+
+		else {
+
+			configGrid.setDisable(true);
+		}
 		
 		
-		flowLanConfig = new FlowPane(Orientation.HORIZONTAL);
-		flowLanConfig.setHgap(10);
-		flowLanConfig.getChildren().addAll(checkLanConfig, customConfig);
-		
-		configGrid = new GridPane();
-		configGrid.setHgap(15);
-		configGrid.setVgap(15);
-		configGrid.setVgrow(fieldPorta, Priority.ALWAYS);
-		configGrid.setHgrow(fieldIndirizzo, Priority.ALWAYS);
-		configGrid.add(porta, 0, 0);
-		configGrid.add(fieldPorta, 1, 0);
-		configGrid.add(indirizzo, 0, 1);
-		configGrid.add(fieldIndirizzo, 1, 1);
-		
-		
+
 		checkLanConfig.selectedProperty().addListener(
 				new ChangeListener<Boolean>() {
 					public void changed(ObservableValue ov, Boolean old_val,
@@ -445,16 +534,6 @@ public class TabImpostazioni extends VBox{
 					}
 				});
 		
-		
-		vboxLanCofing = new VBox();
-		vboxLanCofing.getChildren().addAll(lanConfig, lanLine);
-		vboxLanCofing.getChildren().add(flowLanConfig);
-		vboxLanCofing.setMargin(flowLanConfig, new Insets(40, 0, 0, 0));
-		vboxLanCofing.getChildren().add(configGrid);
-		vboxLanCofing.setMargin(configGrid, new Insets(20, 0, 20, 40));
-
-		
-
 		
         //add Download Settings
 		

@@ -10,6 +10,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ import java.util.List;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import javax.imageio.ImageIO;
 
 import org.hamisto.filmista.Serie;
-import org.hamisto.filmista.Stagione;
+import org.hamisto.filmista.TopElement;
+import org.hamisto.userInterface.TabImpostazioni;
 
 public class FilmistaDb {
 
@@ -62,7 +65,8 @@ public class FilmistaDb {
 				String tableName = result.getString("TABLE_NAME");
 				System.out.println(tableName);
 				if (tableName.equals("TABSERIES") == true
-						|| tableName.equals("ORDINAMENTO") == true) {
+						|| tableName.equals("ORDINAMENTO") == true
+						|| tableName.equals("TOPSERIES") == true || tableName.equals("TABSETTINGS") == true) {
 
 					tablesNotExist = false;
 				}
@@ -96,11 +100,37 @@ public class FilmistaDb {
 					+ "Overview text,"
 					+ "Image varchar(30)," + "primary key(Id))";
 			stat.executeUpdate(tabSeries);
-			
+
 			String tabChoiceBox = "CREATE TABLE ORDINAMENTO(orderBy varchar(30))";
 			stat.executeUpdate(tabChoiceBox);
+
 			
+			String tabTopSeries = "CREATE TABLE TOPSERIES(Id varchar(20) NOT NULL," +
+					"Imdb varchar(30)," +
+					"Nome varchar(50)," +
+					"Overview text," +
+					"Genre varchar(50)," +
+					"Runtime varchar(30)," +
+					"Status varchar(30)," +
+					"Rating varchar (10)," +
+					"Image varchar(30)," +
+					"primary key(Id))";
+			stat.executeUpdate(tabTopSeries);
+			
+			
+			String tabSettings = "CREATE TABLE TABSETTINGS(Choosepath BOOLEAN," +
+					"Pathdownload text," +
+					"Createfolder BOOLEAN," +
+					"Createfolderseason BOOLEAN," +
+					"Language BOOLEAN," +
+					"Indirizzo text," +
+					"Porta varchar(30)," +
+					"Enablelanconfig BOOLEAN)";
+				
+			stat.executeUpdate(tabSettings);
+
 			stat.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -125,8 +155,7 @@ public class FilmistaDb {
 				s.setId(res.getString("Id"));
 				s.setNome(res.getString("Name"));
 				String imagePath = res.getString("Image");
-				
-			
+
 				Image image = null;
 				try {
 					image = new Image(new FileInputStream(imagePath));
@@ -149,7 +178,108 @@ public class FilmistaDb {
 		}
 		return null;
 	}
+    
+	public void setTabSettings(){
+		
+		
+		try {
+		Statement stat = conn.createStatement();
+		String query = "SELECT * FROM TABSETTINGS";
+		ResultSet res;
+		res = stat.executeQuery(query);
+		while (res.next()) {
+          
+			System.out.println(res.getString("Pathdownload"));
+			System.out.println(res.getString("Createfolder"));
+			System.out.println(res.getString("Choosepath"));
+			System.out.println(res.getString("Createfolderseason"));
+			System.out.println(res.getString("Language"));
+			System.out.println(res.getString("Enablelanconfig"));
+			System.out.println(res.getString("Porta"));
+			System.out.println(res.getString("Indirizzo"));
+			TabImpostazioni.chooser.setInitialDirectory(new File(res.getString("Pathdownload")));
+			TabImpostazioni.seriesFolder.setSelected(res.getBoolean("Createfolder"));
+			TabImpostazioni.enableDirectoryChooser.setSelected(res.getBoolean("Choosepath"));
+			TabImpostazioni.seasonFolder.setSelected(res.getBoolean("Createfolderseason"));
+			TabImpostazioni.english.setSelected(res.getBoolean("Language"));
+			TabImpostazioni.checkLanConfig.setSelected(res.getBoolean("Enablelanconfig"));
+			TabImpostazioni.fieldPorta.setText(res.getString("Porta"));
+			TabImpostazioni.fieldIndirizzo.setText(res.getString("Indirizzo"));
+			
+			
 
+			}
+		stat.close();
+		res.close();
+		
+
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+	}
+	
+	public void updateSettingPar(){
+		
+	
+		try {
+			
+			if(numbRecordSettings() == 0){
+			PreparedStatement prest;
+		    String sql = "INSERT into TABSETTINGS(Choosepath, Pathdownload, Createfolder, " +
+                "Createfolderseason, Language, Indirizzo, Porta , Enablelanconfig)"
+                + "values(?,?,?,?,?,?,?,?)";
+		 
+		    prest = conn.prepareStatement(sql);
+	        prest.setBoolean(1, TabImpostazioni.enableDirectoryChooser.isSelected());
+	        prest.setString(2, TabImpostazioni.downloadPath.getText().toString());
+	        prest.setBoolean(3, TabImpostazioni.seriesFolder.isSelected());
+	        prest.setBoolean(4, TabImpostazioni.seasonFolder.isSelected());
+	        prest.setBoolean(5, TabImpostazioni.english.isSelected());
+	        prest.setString(6, TabImpostazioni.fieldIndirizzo.getText());
+	        prest.setString(7, TabImpostazioni.fieldPorta.getText());
+	        prest.setBoolean(8, TabImpostazioni.checkLanConfig.isSelected());
+	        
+	        
+		    prest.executeUpdate();
+		    prest.close();
+			}
+			
+			else{
+			PreparedStatement prest;
+			String sql= "UPDATE TABSETTINGS SET Choosepath = ?, " +
+					"Pathdownload = ?, " +
+					"Createfolder = ?, " +
+					"Createfolderseason = ?," +
+					"Language = ?," +
+					"Indirizzo = ?, " +
+					"Porta = ?, " +
+					"Enablelanconfig = ?";
+			
+			prest = conn.prepareStatement(sql);
+			prest.setBoolean(1, TabImpostazioni.enableDirectoryChooser.isSelected());
+		    prest.setString(2, TabImpostazioni.downloadPath.getText().toString());
+		    prest.setBoolean(3, TabImpostazioni.seriesFolder.isSelected());
+		    prest.setBoolean(4, TabImpostazioni.seasonFolder.isSelected());
+		    prest.setBoolean(5, TabImpostazioni.english.isSelected());
+		    prest.setString(6, TabImpostazioni.fieldIndirizzo.getText());
+		    prest.setString(7, TabImpostazioni.fieldPorta.getText());
+		    prest.setBoolean(8, TabImpostazioni.checkLanConfig.isSelected());
+		    prest.executeUpdate();
+		    prest.close();
+		                
+				
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	
+		
+	}
 	public void updateOrdinamentoFilmistaDb(String order) {
 
 		try {
@@ -175,7 +305,27 @@ public class FilmistaDb {
 		}
 
 	}
+    public int numbRecordSettings(){
+    	
+    	int count = 0;
+		try {
 
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery("SELECT * FROM TABSETTINGS");
+			while (rs.next()) {
+				count++;
+			}
+			System.out.println("tab settings:" + count);
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		return count;
+    	
+    }
 	public int numbRecordOrdinamento() {
 
 		int count = 0;
@@ -197,6 +347,8 @@ public class FilmistaDb {
 		return count;
 
 	}
+	
+
 
 	public List<String> setChoiceBox() {
 
@@ -267,6 +419,125 @@ public class FilmistaDb {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void resetTopSeriesDb(){
+		
+		try{
+			  Statement st = conn.createStatement();
+			  String sql = "DELETE FROM TOPSERIES";
+			  int delete = st.executeUpdate(sql);
+			  st.close();
+			  if(delete == 0){
+			  System.out.println("All rows are completelly deleted!");
+			  }
+			  }
+			  catch(SQLException s){
+			  System.out.println("SQL statement is not executed!");
+			  }
+		
+		
+	}
+	
+	public static void view(){
+		
+		 try{
+			  Statement st = conn.createStatement();
+			  ResultSet rs = st.executeQuery("SELECT * FROM TOPSERIES");
+			  ResultSetMetaData md = rs.getMetaData();
+			  int col = md.getColumnCount();
+			  System.out.println("Number of Column : "+ col);
+			  System.out.println("Columns Name: ");
+			  for (int i = 1; i <= col; i++){
+			  String col_name = md.getColumnName(i);
+			  System.out.println(col_name);
+			  }
+			  rs.close();
+			  st.close();
+			  }
+			  catch (SQLException s){
+			  System.out.println("SQL statement is not executed!");
+			  }
+		  
+		
+		
+	}
+	public static void addTopElementDb(TopElement element) throws IOException, SQLException{
+		
+		 
+		  
+		
+		String destinationFile = "imageTop/top-" + element.getId() + ".jpeg";
+		System.out.println(destinationFile);
+		saveImageTop(element.getPoster(), destinationFile);
+
+		PreparedStatement pstmt = conn
+				.prepareStatement("INSERT into TOPSERIES(Id, Imdb, Nome, Overview, Genre, Runtime, Status, Rating, Image)"
+						+ "values(?,?,?,?,?,?,?,?,?)");
+		pstmt.setString(1, element.getId());
+		pstmt.setString(2, element.getIdImdb());
+		pstmt.setString(3, element.getNome());
+		pstmt.setString(4, element.getOverview());
+		pstmt.setString(5, element.getGenre());
+		pstmt.setString(6, element.getRuntime());
+		pstmt.setString(7, element.getStatus());
+		pstmt.setString(8, element.getRating());
+		pstmt.setString(9, destinationFile);
+		
+		pstmt.executeUpdate();
+
+		pstmt.close();
+		
+		
+	}
+	
+	
+	public List<TopElement> getTopElementData() {
+
+		List<TopElement> list = new LinkedList<>();
+
+		try {
+
+			Statement stat = conn.createStatement();
+			String query = "SELECT * FROM TOPSERIES";
+			ResultSet res;
+			res = stat.executeQuery(query);
+
+			while (res.next()) {
+
+				TopElement element = new TopElement();
+				element.setId(res.getString("Id"));
+				element.setIdImdb(res.getString("Imdb"));
+				element.setNome(res.getString("Nome"));
+				element.setOverview(res.getString("Overview"));
+				element.setGenre(res.getString("Genre"));
+				element.setRuntime(res.getString("Runtime"));
+				element.setStatus(res.getString("Status"));
+				element.setRating(res.getString("Rating"));
+				String imagePath = res.getString("Image");
+
+				Image image = null;
+				try {
+					image = new Image(new FileInputStream(imagePath));
+				} catch (FileNotFoundException e) {
+					;// TODO: caricare immagine di default
+				}
+				element.setPoster(image);
+				list.add(element);
+
+			}
+
+			res.close();
+			stat.close();
+
+			return list;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 	public static void saveImage(Image image, String destinationFile)
 			throws IOException {
@@ -274,7 +545,22 @@ public class FilmistaDb {
 		BufferedImage im = null;
 		im = SwingFXUtils.fromFXImage(image, im);
 		ImageIO.write(im, "png", new File(destinationFile));
+		
 
 	}
+	public static void saveImageTop(Image image, String destinationFile)
+			throws IOException {
+
+		
+		ImageView imageview = new ImageView(image);
+		File output = new File(destinationFile);
+		ImageIO.write(SwingFXUtils.fromFXImage(imageview.snapshot(null,null), null), "jpeg", output);
+		
+		
+	
+	}
+	
+	
+	
 
 }

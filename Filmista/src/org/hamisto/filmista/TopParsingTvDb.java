@@ -1,10 +1,11 @@
 package org.hamisto.filmista;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javafx.scene.image.Image;
 
@@ -12,12 +13,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hamisto.database.FilmistaDb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class TopParsingTvDb {
 
+	
+	
 	private static class CreateTopsElement extends Thread {
          
 		private TopSeriesWorkerListener listener;
@@ -43,12 +47,15 @@ public class TopParsingTvDb {
 		public void run() {
 			
 		
-               
-			for (int i = 0; i < TopParsingImdb.getInstance().Top.size(); i++) {
-               
-				TopElement element = new TopElement();
-
+			ExecutorService executorPool = TopParsingTvDb.getThreadPool();
+			List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+			FilmistaDb.getInstance().resetTopSeriesDb();
 			
+			for (int i = 0; i < (TopParsingImdb.getInstance().Top.size()) && (i < 1); i++) {
+               
+				final TopElement element = new TopElement();
+                  
+			    
 				String requestUrl = "http://www.thetvdb.com/api/55D4BDC0A1305510/series/"
 						+ GetIdTvDB(TopParsingImdb
 								.getInstance().Top.get(i)) + "/all/en.xml";
@@ -81,8 +88,13 @@ public class TopParsingTvDb {
 				}
 
 				// setto parametri oggetto element da inserire nella lista top
-				element.setId(GetIdTvDB(TopParsingImdb
-						.getInstance().Top.get(i)));
+				final String id = GetIdTvDB(TopParsingImdb
+						.getInstance().Top.get(i));
+				
+				element.setIdImdb(TopParsingImdb
+						.getInstance().Top.get(i));
+				System.out.println(element.getIdImdb());
+				element.setId(id);
 				element.setNome(nameNode.getTextContent());
 				element.setOverview(overviewNode.getTextContent());
 				element.setGenre(genreNode.getTextContent());
@@ -91,10 +103,36 @@ public class TopParsingTvDb {
 				element.setRating(ratingNode.getTextContent());
 				element.setShortOverview(createShortOverview(overviewNode
 						.getTextContent()));
-				element.setPoster(LoadPoster(GetIdTvDB(TopParsingImdb
-						.getInstance().Top.get(i))));
+				
+				
+				Runnable job = new Runnable() {
+					@Override
+					public void run() {
+                        
+						System.out.println("id tvdb:" + id + "id Imdb:" + element.getIdImdb());
+						element.setPoster(LoadPoster(id));
 
+					}
+				};
+				
+				tasks.add(Executors.callable(job));
+	            
+			 
 				tops.add(element);
+				
+			}
+			
+			try {
+				executorPool.invokeAll(tasks);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+
+			} finally{			
+				executorPool.shutdownNow();
+				TopParsingTvDb.clearExecutorPool();
+				
+			
 			}
 
 		done(tops);
@@ -148,41 +186,18 @@ public class TopParsingTvDb {
 		private Image LoadPoster(String IdtvDB) {
 			// TODO Auto-generated method stub
 
-			URL u1 = null;
-			javafx.scene.image.Image image = null;
+			
 
-			try {
-				u1 = new URL("http://www.thetvdb.com/banners/_cache/posters/"
-						+ IdtvDB + "-1.jpg");
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// setto immagine postert
-			try {
-				if (u1.openConnection().getContentLength() > 0) {
-					Image image2 = new Image(
-							"http://www.thetvdb.com/banners/_cache/posters/"
-									+ IdtvDB + "-1.jpg", 220, 220, true, true,
-							true);
-					image = image2;
-
-					
-				}
-
-				else {
-					Image image3 = new Image("img/Imagenotfound_v2.png", 220,
-							220, true, true, true);
-					image = image3;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			Image image= new Image(
+					"http://thetvdb.com/banners/_cache/fanart/original/"
+							+ IdtvDB + "-5.jpg", 200, 200, true, true,
+					true);
 
 			return image;
 		}
+		
+		
 		
 		private static String GetIdTvDB( String idImdb) {
 
@@ -216,16 +231,42 @@ public class TopParsingTvDb {
 
 	static List<TopElement> tops;
 	private static DocumentBuilder documentBuilder;
+	private static ExecutorService executorPool;
+	
+	// get per il thread
+		private static ExecutorService getThreadPool() {
+			if (executorPool == null) {
+				executorPool = Executors.newFixedThreadPool(15);
+			}
 
+			return executorPool;
+
+		}
+		
+		private static void clearExecutorPool(){
+			executorPool=null;
+		}
+
+		
+		
 	public TopParsingTvDb(TopSeriesWorkerListener listener ) {
 
 		if (tops == null) {
 			
-			tops = new ArrayList<TopElement>();
+			tops = FilmistaDb.getInstance().getTopElementData();
 		}
 		
+		if (tops.size() == 10){
+			
+			
+		}
+		
+		else{
+			
 		
 		new CreateTopsElement(listener).start();
+		
+		}
 
 	}
 

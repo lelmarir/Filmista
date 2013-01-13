@@ -241,27 +241,23 @@
 }
 /* ====  TOPSERIES-EFFECT  ===================================================== */
 
-.top-effect-even{
+.topeffect-even{
 
         -fx-background-color: linear-gradient(to right,rgba(100,100,100,0.5),rgba(100,100,100,0.38));
         
  }  
  
  .topeffect-odd{
-        
+        /*dispari*/
          -fx-background-color: linear-gradient(to right,rgba(50,50,50,0.5),rgba(50,50,50,0.38)); 
          
          
          }    
          
- .top1-effect{
-        -fx-border-style: solid;
-	    -fx-background-color: radial-gradient(radius 100%, lightgrey, grey);
-	    -fx-border-radius: 0.5;
-	    -fx-background-radius: 10;
-         /*-fx-border-style: solid;*/
-         -fx-border-effect: innershadow(three-pass-box, gray, 9 , 0.5, 1, 1); 
-	    -fx-border-width: 3;
+ .top1-effect {
+ 	
+    -fx-background-color: white,
+                          radial-gradient(radius 90%, white, gray),
 	    
    }        
    
@@ -269,6 +265,8 @@
 
 	-fx-background-color : #CF2B36;
 	-fx-background-radius: 10 10 0 0;
-	
-	
+	}
+
+
+
 }

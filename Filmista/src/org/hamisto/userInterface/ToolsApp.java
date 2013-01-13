@@ -1,5 +1,6 @@
 package org.hamisto.userInterface;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,6 +69,10 @@ public class ToolsApp extends Application {
 	private Tool nextTool = null;
 	private int nextToolIndex;
 	private DoubleProperty arrowH = new SimpleDoubleProperty(200);
+	
+	
+	//daemon process
+	public static Process pr;
 
 	// thread
 	private static ExecutorService executorPool;
@@ -97,23 +102,57 @@ public class ToolsApp extends Application {
 	}
 
 	public static void main(String[] args) {
+		
+		
 		System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
 		launch(args);
+	
 	}
 
 	@Override
 	public void start(final Stage primaryStage) throws IOException {
         
 	
-		
+		primaryStage.setOnShowing(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				
+               FilmistaDb.getInstance().view();
+
+				try {
+					        pr = new ProcessBuilder(System.getProperty("user.home")+
+							"/Downloads/transmission-2.50/build/Release/transmission-daemon")
+							.start();
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		});
+
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 			@Override
 			public void handle(WindowEvent event) {
-
+                
+				
+				try {
+					pr = Runtime.getRuntime().exec(
+							"killall transmission-daemon");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 				FilmistaDb.getInstance().updateOrdinamentoFilmistaDb(
 						TabPreferiti.cb.getSelectionModel().getSelectedItem()
 								.toString());
+				FilmistaDb.getInstance().updateSettingPar();
 				FilmistaDb.getInstance().CloseDb();
 				primaryStage.close();
 
@@ -137,7 +176,10 @@ public class ToolsApp extends Application {
 								65, true, true)),
 				new Tool("Impostazioni", new TabImpostazioni(), new Image(
 						ToolsApp.class.getResourceAsStream("images/Tools.png"),
-						65, 65, true, true))
+						65, 65, true, true)),
+			    new Tool("Download", new TabDownload(), new Image(
+						ToolsApp.class.getResourceAsStream("images/Download.png"),
+						65, 65, true, true)),		
 
 		};
 		ServiceLoader toolLoader = ServiceLoader.load(Tool.class);
@@ -211,7 +253,8 @@ public class ToolsApp extends Application {
 
 					if (arg0.getCode() == KeyCode.UP
 							|| arg0.getCode() == KeyCode.DOWN) {
-
+                        
+						System.out.println(ToolsApp.GetStage().getWidth());
 						button.setSelected(true);
 						switchTool(tool, index);
 
