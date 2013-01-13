@@ -441,6 +441,7 @@ public class FilmistaDb {
 	public static void view(){
 		
 		 try{
+			 
 			  Statement st = conn.createStatement();
 			  ResultSet rs = st.executeQuery("SELECT * FROM TOPSERIES");
 			  ResultSetMetaData md = rs.getMetaData();
@@ -457,8 +458,6 @@ public class FilmistaDb {
 			  catch (SQLException s){
 			  System.out.println("SQL statement is not executed!");
 			  }
-		  
-		
 		
 	}
 	public static void addTopElementDb(TopElement element) throws IOException, SQLException{
