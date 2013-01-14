@@ -50,7 +50,6 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -68,17 +67,17 @@ public class TopSeries extends ScrollPane{
 
 	
 	
-	private VBox principal;
+	private static VBox principal;
 	private Button update;
-	private GridPane  updategrid;
+	private static GridPane  updategrid;
 	private FlowPane flow;
-	private StackPane stack;
+	public static StackPane stack;
 	
-	private HBox hbox1;
-	private HBox hbox2;
-	private HBox hbox3;
-	private HBox hbox4;
-	private HBox hbox5;
+	public static HBox hbox1;
+	public static HBox hbox2;
+	public static HBox hbox3;
+	public static HBox hbox4;
+	public static HBox hbox5;
 	
 	
 	private static final Integer STARTTIME = 0;
@@ -89,10 +88,38 @@ public class TopSeries extends ScrollPane{
 		// TODO Auto-generated constructor stub
 		
 		
-	    principal = new VBox();
-		principal.setPadding(new Insets(20));
+	     principal = new VBox();
+		 principal.setPadding(new Insets(20));
 		
-		
+		 hbox1 = new HBox();
+		 hbox1.setVisible(false);
+	     hbox1.getStyleClass().add("topeffect-odd");
+	     hbox1.setPadding(new Insets(30, 30, 30, 10));
+	     
+	     hbox2 = new HBox();
+	     hbox2.setVisible(false);
+	     hbox2.getStyleClass().add("topeffect-even");
+	     hbox2.setPadding(new Insets(30, 30, 30, 10));
+	     
+	     hbox3 = new HBox();
+	     hbox3.setVisible(false);
+	     hbox3.getStyleClass().add("topeffect-odd");
+	     hbox3.setPadding(new Insets(30, 30, 30, 10));
+	     
+	     hbox4 = new HBox();
+	     hbox4.setVisible(false);
+	     hbox4.getStyleClass().add("topeffect-even");
+	     hbox4.setPadding(new Insets(30, 30, 30, 10));
+	     
+	     
+	     
+		 hbox5 = new HBox();
+		 hbox5.setVisible(false);
+	     hbox5.getStyleClass().add("topeffect-odd");
+	     hbox5.setPadding(new Insets(30, 30, 30, 10));
+		 
+	     
+	     stack = new StackPane();
 		
 		Light.Point light = new Light.Point();
 	
@@ -133,8 +160,9 @@ public class TopSeries extends ScrollPane{
 				new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-			
-			
+				
+			    updategrid.getChildren().removeAll(stack);
+			    principal.getChildren().removeAll(hbox1, hbox2, hbox3, hbox4, hbox5);
 				update.setDisable(true);
 				
 				
@@ -148,7 +176,30 @@ public class TopSeries extends ScrollPane{
 							
 							@Override
 							public void run() {
+							
 								
+								FilmistaDb.getInstance().resetTopSeriesDb();
+								
+								
+								if(TopParsingTvDb.alreadyUpdate == false){
+								for(int i = 0;i < topseries.size(); i++){
+									
+									
+									
+								
+								try {
+									FilmistaDb.getInstance().addTopElementDb(topseries.get(i));
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+								}
+								
+								}
 								update.setDisable(false);
 								System.out.println(topseries.size());
 								
@@ -183,46 +234,22 @@ public class TopSeries extends ScrollPane{
 		updategrid.getColumnConstraints().add(new ColumnConstraints()); 
 		updategrid.getColumnConstraints().add(new ColumnConstraints(200)); 
 		updategrid.add(flow, 1, 0);
-		stack = new StackPane();
 		updategrid.add(stack, 0, 0);
-		
 		updategrid.setVgrow(stack, Priority.ALWAYS);
-	
-        
-		 hbox1 = new HBox();
-		 hbox1.setVisible(false);
-	     hbox1.getStyleClass().add("topeffect-odd");
-	     hbox1.setPadding(new Insets(30, 30, 30, 10));
-	     
-	     hbox2 = new HBox();
-	     hbox2.setVisible(false);
-	     hbox2.getStyleClass().add("topeffect-even");
-	     hbox2.setPadding(new Insets(30, 30, 30, 10));
-	     
-	     hbox3 = new HBox();
-	     hbox3.setVisible(false);
-	     hbox3.getStyleClass().add("topeffect-odd");
-	     hbox3.setPadding(new Insets(30, 30, 30, 10));
-	     
-	     hbox4 = new HBox();
-	     hbox4.setVisible(false);
-	     hbox4.getStyleClass().add("topeffect-even");
-	     hbox4.setPadding(new Insets(30, 30, 30, 10));
-	     
-	     
-	     
-		 hbox5 = new HBox();
-		 hbox5.setVisible(false);
-	     hbox5.getStyleClass().add("topeffect-odd");
-	     hbox5.setPadding(new Insets(30, 30, 30, 10));
-		
-	    
-	    principal.getChildren().add(hbox1);
+		principal.getChildren().add(hbox1);
 		principal.setMargin(hbox1, new Insets(30, 0, 0, 0));
 		principal.getChildren().add(hbox2);
 		principal.getChildren().add(hbox3);
 		principal.getChildren().add(hbox4);
 		principal.getChildren().add(hbox5);
+		  
+		
+	
+        
+		
+		
+	    
+	   
 		
 		this.setFitToWidth(true);
 		this.setContent(principal);
@@ -232,7 +259,10 @@ public class TopSeries extends ScrollPane{
 	}
 	
 	
-	private void updateSeriesTop(List<TopElement> topseries){
+	public static void updateSeriesTop(List<TopElement> topseries){
+		
+		
+		
 		
 		for (int i = 0 ; i < topseries.size(); i++){
 			
@@ -267,7 +297,7 @@ public class TopSeries extends ScrollPane{
 		 hbox5.setVisible(true);
 	}
 	
-	private void CreateTopElementLayout(
+	private static void CreateTopElementLayout(
 			final TopElement topElement) {
 		// TODO Auto-generated method stub
 		
@@ -565,7 +595,7 @@ public class TopSeries extends ScrollPane{
 	}
 	
 	
-	private Popup CreateTopElementPopUp (
+	private static Popup CreateTopElementPopUp (
 			TopElement topElement,Label top,int pos) {
 		
 		
@@ -787,7 +817,7 @@ public class TopSeries extends ScrollPane{
 		
 	}
 	
-	     private  int RateToStars(String rating){
+	     private static  int RateToStars(String rating){
 		 int starNum;
 		 float ratingNumb = Float.parseFloat(rating); 
 		 System.out.println(ratingNumb);
@@ -814,7 +844,7 @@ public class TopSeries extends ScrollPane{
 	     
 	     
 
-			private void CreateOtherElement(
+			private static void CreateOtherElement(
 					final TopElement topElement, final int pos) {
 				// TODO Auto-generated method stub
 				

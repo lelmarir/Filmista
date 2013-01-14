@@ -369,6 +369,30 @@ public class FilmistaDb {
 			e.printStackTrace();
 
 		}
+		
+		   return count;
+
+	}
+	
+	
+	public int numbRecordTopSeries() {
+
+		int count = 0;
+		try {
+
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery("SELECT * FROM TOPSERIES");
+			while (rs.next()) {
+				count++;
+			}
+			System.out.println(count);
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
 		return count;
 
 	}

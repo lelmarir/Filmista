@@ -119,8 +119,17 @@ public class ToolsApp extends Application {
 			public void handle(WindowEvent event) {
 				
                FilmistaDb.getInstance().view();
+               System.out.println("Dimensione Table Top: " + FilmistaDb.getInstance().numbRecordTopSeries());
+               if(FilmistaDb.getInstance().numbRecordTopSeries() == 10){
+            	   
+            	   
+               TopSeries.updateSeriesTop(FilmistaDb.getInstance().getTopElementData());
+               
+               }
 
 				try {
+					
+					
 					        pr = new ProcessBuilder(System.getProperty("user.home")+
 							"/Downloads/transmission-2.50/build/Release/transmission-daemon")
 							.start();

@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 public class TopParsingTvDb {
 
 	
-	static boolean alreadyUpdate = true;
+	public static boolean alreadyUpdate = true;
 	private static class CreateTopsElement extends Thread {
          
 		private TopSeriesWorkerListener listener;
@@ -166,28 +166,9 @@ public class TopParsingTvDb {
 
 			} finally{			
 				
-				
 				executorPool.shutdownNow();
 				TopParsingTvDb.clearExecutorPool();
 				
-				
-				for(int k = 0; k < tops.size(); k++){
-					
-				if(alreadyUpdate == false)	
-					
-					FilmistaDb.getInstance().resetTopSeriesDb();
-					try {
-						FilmistaDb.getInstance().addTopElementDb(tops.get(k));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-			
 			}
 
 		done(tops);
@@ -332,7 +313,7 @@ public class TopParsingTvDb {
 		return documentBuilder;
 	}
  
-
+     
 
 	public static List<TopElement> getTops() {
 		return tops;
