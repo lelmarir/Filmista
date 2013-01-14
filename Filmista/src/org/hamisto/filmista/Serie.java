@@ -299,6 +299,11 @@ public class Serie {
 		}
 		return stagioni;
 	}
+	
+	public void setStagioni( List<Stagione> stagioni){
+		
+		this.stagioni = stagioni;
+	}
 
 	public Image getPoster() {
 		return poster;
@@ -329,7 +334,7 @@ public class Serie {
 				Image image2 = new Image(
 						"http://www.thetvdb.com/banners/_cache/posters/"
 								+ this.getId() + "-1.jpg", 220, 220, true,
-						true, true);
+						true);
 				image = image2;
 				
 				System.out.println(u1);
@@ -337,7 +342,7 @@ public class Serie {
 
 			else{
 				Image image3 = new Image("img/Imagenotfound_v2.png", 220, 220, true,
-						true, true);
+						true);
 				image = image3;
 			} 
 		} catch (IOException e) {
@@ -359,7 +364,7 @@ public class Serie {
 		try {
 			u = new URL("http://www.thetvdb.com/api/55D4BDC0A1305510/series/"
 					+ this.getId() + "/all/en.xml");
-		
+		     
 			InputStream is = u.openStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
@@ -387,8 +392,8 @@ public class Serie {
 				}
 				preNum = number;
 
-				Stagione st1 = new Stagione(number);
-				
+				//Stagione st1 = new Stagione(number);
+				Stagione st1 = new Stagione(this, number);
 
 				this.stagioni.add(st1);
 			}

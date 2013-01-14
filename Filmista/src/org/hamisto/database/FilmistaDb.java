@@ -24,8 +24,13 @@ import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 
 import org.hamisto.filmista.Serie;
+import org.hamisto.filmista.SingleEpisode;
+import org.hamisto.filmista.Stagione;
 import org.hamisto.filmista.TopElement;
 import org.hamisto.userInterface.TabImpostazioni;
+import org.transdroid.daemon.Torrent;
+
+import search.daemon.DaemonManager;
 
 public class FilmistaDb {
 
@@ -37,8 +42,11 @@ public class FilmistaDb {
 
 	public static FilmistaDb getInstance() {
 		if (instance == null) {
+			
 			instance = new FilmistaDb();
+			
 		}
+		
 		return instance;
 	}
 
@@ -128,6 +136,23 @@ public class FilmistaDb {
 					"Enablelanconfig BOOLEAN)";
 				
 			stat.executeUpdate(tabSettings);
+			
+			//tabelle torrent
+			
+			String tabSeason = "CREATE TABLE SEASON(Id int NOT NULL AUTO_INCREMENT," 
+					+ "IdSerie varchar(20) NOT NULL,"
+					+ "Number varchar(3) NOT NULL,"
+					+ "primary key(Id))";
+			stat.executeUpdate(tabSeason);
+
+			String tabEpisode = "CREATE TABLE EPISODE(Id int NOT NULL AUTO_INCREMENT," 
+					+ "IdSeason int NOT NULL,"
+					+ "EpNumber varchar(3) NOT NULL,"
+					+ "EpName varchar(50) NOT NULL,"
+					+ "TorName varchar(80),"
+					+ "primary key(Id))";
+			stat.executeUpdate(tabEpisode);
+			
 
 			stat.close();
 			
@@ -465,9 +490,9 @@ public class FilmistaDb {
 		 
 		  
 		
-		String destinationFile = "imageTop/top-" + element.getId() + ".jpeg";
+		String destinationFile = "imageTop/top-" + element.getId() + ".png";
 		System.out.println(destinationFile);
-		saveImageTop(element.getPoster(), destinationFile);
+		saveImage(element.getPoster(), destinationFile);
 
 		PreparedStatement pstmt = conn
 				.prepareStatement("INSERT into TOPSERIES(Id, Imdb, Nome, Overview, Genre, Runtime, Status, Rating, Image)"
@@ -547,19 +572,81 @@ public class FilmistaDb {
 		
 
 	}
-	public static void saveImageTop(Image image, String destinationFile)
-			throws IOException {
 
-		
-		ImageView imageview = new ImageView(image);
-		File output = new File(destinationFile);
-		ImageIO.write(SwingFXUtils.fromFXImage(imageview.snapshot(null,null), null), "jpeg", output);
-		
-		
+	//metodo recupero informazioni download per ogni serie
 	
+	
+	public Serie getData(Serie s) {
+
+		try {
+			//Statement stat = conn.createStatement();
+
+			String idSerie = s.getId();
+
+			String query1 = "SELECT * FROM SEASON WHERE IdSerie = '" + idSerie + "'";
+			ResultSet res1;
+			Statement stat1 = conn.createStatement();
+			res1 = stat1.executeQuery(query1);
+			System.out.println(res1.toString());
+			List<Stagione> stagioni = new ArrayList<Stagione>(); 
+
+			while(res1.next()) {
+				Stagione season = new Stagione();
+				String numero = res1.getString("Number");
+				season.setNumero(numero);
+				int idSeason = res1.getInt("Id");
+
+				System.out.println(idSeason + numero);
+
+				String query2 = "SELECT * FROM EPISODE WHERE IdSeason = " + idSeason;
+				ResultSet res2;
+				Statement stat2 = conn.createStatement();
+				res2 = stat2.executeQuery(query2);
+				System.out.println(res2.toString());
+				ArrayList<SingleEpisode> episodi = new ArrayList<SingleEpisode>();
+
+				while(res2.next()){
+					SingleEpisode episode = new SingleEpisode();
+					String epNumber = res2.getString("EpNumber");
+					episode.setEpisodeNumber(epNumber);
+
+					String epName = res2.getString("EpName");
+					episode.setEpisodeName(epName);
+
+
+					String torName = res2.getString("TorName");
+
+					System.out.println(epNumber + epName + torName);
+
+					if(torName.equals("-1")) episode.setTorrent(null);
+					else {
+						DaemonManager manager = new DaemonManager();
+						List<Torrent> torList = manager.retrieveTorrentList();
+						for (int i=0; i<torList.size();i++){
+							if (torName.equals(torList.get(i).getName())){
+								episode.setTorrent(torList.get(i));
+								i=torList.size() + 1;
+							}
+						}
+
+					}
+
+					episodi.add(episode);
+				}
+				res2.close();
+				season.setEpisodiStagione(episodi);
+
+				stagioni.add(season);
+			}
+			res1.close();
+			s.setStagioni(stagioni);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return s;
 	}
-	
-	
 	
 
 }

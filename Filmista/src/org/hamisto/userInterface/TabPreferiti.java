@@ -1,12 +1,16 @@
 package org.hamisto.userInterface;
 
+import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -28,6 +32,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import javafx.util.Duration;
 
 import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
@@ -43,6 +48,7 @@ public class TabPreferiti extends ScrollPane{
 	private Label order;
 	@SuppressWarnings("rawtypes")
 	static ChoiceBox cb;
+	static Robot robot;
 	
 
 	static boolean updatedb = false;
@@ -254,6 +260,32 @@ public class TabPreferiti extends ScrollPane{
 		//tooltip.show(image, (e.getScreenX() ), (e.getScreenY() + 15.0));
 		
 		
+		final Timeline timeline = new Timeline();
+		
+		
+		
+		
+		   timeline.getKeyFrames().add(
+	                new KeyFrame(Duration.seconds(2.0),
+	                  new EventHandler() {
+	                    // KeyFrame event handler
+	                	
+						@Override
+						public void handle(Event arg0) {
+							// TODO Auto-generated method stub
+							    
+		                        if (timeline.getCurrentTime().greaterThanOrEqualTo(timeline.getTotalDuration())){
+		                                   	
+		                        	 
+			                         timeline.stop();
+			                         
+			                        	
+		                        }       
+		                              
+						}		
+						
+	                }));
+		
 		image.addEventHandler(MouseEvent.MOUSE_ENTERED,
 				new EventHandler<MouseEvent>() {
 			@Override
@@ -263,7 +295,7 @@ public class TabPreferiti extends ScrollPane{
 					
 				 System.out.println("Sto entrando con il mouse");
 				
-				
+				timeline.playFromStart();
 				image.setScaleX(1.115);
 				image.setScaleY(1.115);
 				image.setStyle(style_inner2);
@@ -287,6 +319,7 @@ public class TabPreferiti extends ScrollPane{
 		 
 			  
 		  System.out.println("Sto muovendo il mouse");
+		      timeline.stop();
 			  tooltip.hide();
 		  }
 				
@@ -295,6 +328,8 @@ public class TabPreferiti extends ScrollPane{
 			
 		});
 			
+
+		   
 		image.addEventHandler(MouseEvent.MOUSE_RELEASED,
 				new EventHandler<MouseEvent>() {
 			@Override

@@ -80,11 +80,15 @@ public class TopElement {
 		return poster;
 	}
 	public void setPoster(Image poster) {
+		
+		
 		this.poster = poster;
 	}
 	
 	
 	public String getIdImdb() {
+		
+		
 		return idImdb;
 	}
 

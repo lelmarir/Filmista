@@ -1,6 +1,7 @@
 package org.hamisto.filmista;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -21,7 +22,7 @@ import org.xml.sax.SAXException;
 public class TopParsingTvDb {
 
 	
-	
+	static boolean alreadyUpdate = true;
 	private static class CreateTopsElement extends Thread {
          
 		private TopSeriesWorkerListener listener;
@@ -45,13 +46,44 @@ public class TopParsingTvDb {
 		
 		@Override
 		public void run() {
+			if(tops == null){
+				
+				tops = FilmistaDb.getInstance().getTopElementData();
+				if (tops.size() != 10)
+				{
+					
+					alreadyUpdate = false;
+				}
+				
+				else{
+					for(int i = 0; i < TopParsingImdb.getInstance().getTop().size()
 			
+						; i++){
+					
+					
+					if(tops.get(i).getIdImdb().equals(TopParsingImdb.getInstance().getTop().get(i))){
+						
+					
+						
+					}
+					else{
+						
+						alreadyUpdate = false;
+					}
+					
+					
+					
+				}
+				}
+				
+			}
+			if(alreadyUpdate == false){
 		
 			ExecutorService executorPool = TopParsingTvDb.getThreadPool();
 			List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
-			FilmistaDb.getInstance().resetTopSeriesDb();
 			
-			for (int i = 0; i < (TopParsingImdb.getInstance().Top.size()) && (i < 1); i++) {
+			
+			for (int i = 0; i < (TopParsingImdb.getInstance().Top.size()); i++) {
                
 				final TopElement element = new TopElement();
                   
@@ -115,10 +147,14 @@ public class TopParsingTvDb {
 					}
 				};
 				
+				
 				tasks.add(Executors.callable(job));
 	            
 			 
 				tops.add(element);
+				
+				
+				
 				
 			}
 			
@@ -129,13 +165,37 @@ public class TopParsingTvDb {
 				e.printStackTrace();
 
 			} finally{			
+				
+				
 				executorPool.shutdownNow();
 				TopParsingTvDb.clearExecutorPool();
+				
+				
+				for(int k = 0; k < tops.size(); k++){
+					
+				if(alreadyUpdate == false)	
+					
+					FilmistaDb.getInstance().resetTopSeriesDb();
+					try {
+						FilmistaDb.getInstance().addTopElementDb(tops.get(k));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
 			
 			}
 
 		done(tops);
+			}
+			else{
+				
+				done(tops);
+			}
 
 	}
 		private String createShortOverview(String overview) {
@@ -191,8 +251,7 @@ public class TopParsingTvDb {
 			
 			Image image= new Image(
 					"http://thetvdb.com/banners/_cache/fanart/original/"
-							+ IdtvDB + "-5.jpg", 200, 200, true, true,
-					true);
+							+ IdtvDB + "-5.jpg", 200, 200, true, true);
 
 			return image;
 		}
@@ -229,7 +288,7 @@ public class TopParsingTvDb {
 
 	}
 
-	static List<TopElement> tops;
+	public static List<TopElement> tops;
 	private static DocumentBuilder documentBuilder;
 	private static ExecutorService executorPool;
 	
@@ -251,22 +310,12 @@ public class TopParsingTvDb {
 		
 	public TopParsingTvDb(TopSeriesWorkerListener listener ) {
 
-		if (tops == null) {
-			
-			tops = FilmistaDb.getInstance().getTopElementData();
-		}
 		
-		if (tops.size() == 10){
-			
-			
-		}
 		
-		else{
-			
 		
 		new CreateTopsElement(listener).start();
 		
-		}
+	
 
 	}
 

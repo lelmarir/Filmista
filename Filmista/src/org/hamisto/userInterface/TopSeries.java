@@ -50,6 +50,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -64,6 +65,8 @@ import org.hamisto.filmista.TopSeriesWorkerListener;
 
 public class TopSeries extends ScrollPane{
 
+
+	
 	
 	private VBox principal;
 	private Button update;
@@ -82,7 +85,10 @@ public class TopSeries extends ScrollPane{
 	private Integer timeSeconds ;
 	
 	public TopSeries() {
+		
 		// TODO Auto-generated constructor stub
+		
+		
 	    principal = new VBox();
 		principal.setPadding(new Insets(20));
 		
@@ -117,7 +123,7 @@ public class TopSeries extends ScrollPane{
 			@Override
 			public void handle(MouseEvent e) {
 				
-				
+		
 				
 			}
 		});
@@ -128,7 +134,7 @@ public class TopSeries extends ScrollPane{
 			@Override
 			public void handle(MouseEvent e) {
 			
-				
+			
 				update.setDisable(true);
 				
 				
@@ -146,45 +152,8 @@ public class TopSeries extends ScrollPane{
 								update.setDisable(false);
 								System.out.println(topseries.size());
 								
-								for (int i = 0 ; i < topseries.size(); i++){
-									
-									try {
-										FilmistaDb.getInstance().addTopElementDb(topseries.get(i));
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
 								
-									System.out.println("NOME: " + topseries.get(i).getNome());
-									System.out.println("SHORT OVERVIEW: " + topseries.get(i).getShortOverview());
-									System.out.println("GENRE:" + topseries.get(i).getGenre());
-									System.out.println("\n\n\n\n");
-									
-									
-								if( i == 0){
-									
-									CreateTopElementLayout(topseries.get(i));
-									
-									
-								}
-								
-								else{
-									
-									
-									
-									CreateOtherElement(topseries.get(i), i);
-								}
-									
-								}
-								
-								 hbox1.setVisible(true);
-								 hbox2.setVisible(true);
-								 hbox3.setVisible(true);
-								 hbox4.setVisible(true);
-								 hbox5.setVisible(true);
+								updateSeriesTop(topseries);
 								
 								
 								
@@ -199,9 +168,9 @@ public class TopSeries extends ScrollPane{
 					}
 				});
 		
-			
+				}
 				
-			}
+			
 		});
 		
 		updategrid = new GridPane();
@@ -263,9 +232,43 @@ public class TopSeries extends ScrollPane{
 	}
 	
 	
+	private void updateSeriesTop(List<TopElement> topseries){
+		
+		for (int i = 0 ; i < topseries.size(); i++){
+			
+		
+			System.out.println("NOME: " + topseries.get(i).getNome());
+			topseries.get(i).setShortOverview(topseries.get(i).getOverview());
+			System.out.println("SHORT OVERVIEW: " + topseries.get(i).getShortOverview());
+			System.out.println("GENRE:" + topseries.get(i).getGenre());
+			System.out.println("\n\n\n\n");
+			
+			
+		if( i == 0){
+			
+			CreateTopElementLayout(topseries.get(i));
+			
+			
+		}
+		
+		else{
+			
+			
+			
+			CreateOtherElement(topseries.get(i), i);
+		}
+			
+		}
+		
+		 hbox1.setVisible(true);
+		 hbox2.setVisible(true);
+		 hbox3.setVisible(true);
+		 hbox4.setVisible(true);
+		 hbox5.setVisible(true);
+	}
 	
 	private void CreateTopElementLayout(
-			TopElement topElement) {
+			final TopElement topElement) {
 		// TODO Auto-generated method stub
 		
 		final Label poster = new Label();
@@ -288,7 +291,7 @@ public class TopSeries extends ScrollPane{
 		lighting.setLight(light);
 		 
 		 
-		final Popup popup = CreateTopElementPopUp(topElement, poster);
+		final Popup popup = CreateTopElementPopUp(topElement, poster, 0);
 		
 		final Timeline timeline = new Timeline();
 		final FadeTransition fadeTransition
@@ -359,7 +362,8 @@ public class TopSeries extends ScrollPane{
 					// change the z-coordinate of the circle
 					
 					timeline.stop();
-					popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() -  50,  ToolsApp.GetStage().getY() );
+					
+					popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() -60);
 					System.out.println( (ToolsApp.GetStage().getX() -  30) + "," + (ToolsApp.GetStage().getY() - 20));
 					System.out.println(me.getScreenX() + "," + me.getScreenY());
 					poster.setCursor(Cursor.HAND);
@@ -386,7 +390,7 @@ public class TopSeries extends ScrollPane{
 			});
 	        
 		    timeline.getKeyFrames().add(
-	                new KeyFrame(Duration.seconds(1.2),
+	                new KeyFrame(Duration.seconds(0.5),
 	                  new EventHandler() {
 	                    // KeyFrame event handler
 	                	
@@ -430,7 +434,7 @@ public class TopSeries extends ScrollPane{
 				 System.out.println("Sto entrando con il mouse");
 				 addLink.setStyle(null);
 				 addLink.setStyle("-fx-font: 16px Verdana;" +
-	    		         "-fx-text-fill: #00FFFF;");
+	    		         "-fx-text-fill: #5881DB;");
 				
 			
 				
@@ -459,7 +463,37 @@ public class TopSeries extends ScrollPane{
 		    @Override
 		    public void handle(ActionEvent e) {
 		    	
-		    	Serie s = new Serie();
+		    	Serie serie = new Serie();
+		    	serie.setId(topElement.getId());
+		    	serie.setNome(topElement.getNome());
+		    	serie.setOverview(serie.getOverview());
+		    	serie.loadBanner();
+		    	
+
+				if (Preferiti.getInstance().addToPreferiti(serie) == false) {
+
+					addLink.setVisible(false);
+
+				} else {
+
+					try {
+						FilmistaDb.getInstance().addSeriesToFilmistaDb(
+								serie);
+
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					TabPreferiti.updateTab();
+				}
+		    	
 		        System.out.println("This link is clicked");
 		      
 		    }
@@ -532,19 +566,13 @@ public class TopSeries extends ScrollPane{
 	
 	
 	private Popup CreateTopElementPopUp (
-			TopElement topElement,Label top) {
+			TopElement topElement,Label top,int pos) {
 		
 		
 		
 		
 		final Popup pop = new Popup();
 	
-	    
-		
-		
-		
-	
-		
 		 DropShadow ds = new DropShadow();
 		 ds.setOffsetY(3.0f);
 		 ds.setColor(Color.color(0.4f, 0.4f, 0.4f));
@@ -558,11 +586,22 @@ public class TopSeries extends ScrollPane{
 		
 		
 		Polygon polygon = new Polygon();
-	    polygon.getPoints().addAll(new Double[]{
-	        (rect.getWidth() + rect.getX() + 40.0) , (rect.getY() + (rect.getHeight()/2)),
-	        (rect.getWidth() + rect.getX()), (rect.getY() + (rect.getHeight()/2) - 20.0),
-	        (rect.getWidth() + rect.getX()), (rect.getY() + (rect.getHeight()/2) + 20.0) });
-	    polygon.setFill(Color.GREY);
+		
+
+		 polygon.getPoints().addAll(new Double[]{
+			        320.0 - rect.getWidth() - 80, (rect.getY() + (rect.getHeight()/2)),
+			    	
+			       280 - rect.getWidth(), (rect.getY() + (rect.getHeight()/2) - 20.0),
+			        280 - rect.getWidth(), (rect.getY() + (rect.getHeight()/2) + 20.0) });
+	
+		
+		
+	/*	
+		 polygon.getPoints().addAll(new Double[]{
+			        (rect.getWidth() + rect.getX() + 40.0) , (rect.getY() + (rect.getHeight()/2)),
+			        (rect.getWidth() + rect.getX()), (rect.getY() + (rect.getHeight()/2) - 20.0),
+			        (rect.getWidth() + rect.getX()), (rect.getY() + (rect.getHeight()/2) + 20.0) });*/
+			    polygon.setFill(Color.GREY);
 	    
 		
 	    Shape shape = Shape.union(rect, polygon);
@@ -590,7 +629,9 @@ public class TopSeries extends ScrollPane{
 	  
 	    
 	    VBox vbox = new VBox();
-	    TextArea overview = new TextArea(topElement.getShortOverview());
+	    TextArea overview = new TextArea(topElement.getShortOverview().substring(0, 125).concat("..."));
+	    
+	    System.out.println(topElement.getShortOverview());
 	    
 	    
 	    overview.setStyle("-fx-background-color: lightgray;");
@@ -608,10 +649,8 @@ public class TopSeries extends ScrollPane{
 	    status.setStyle("-fx-font-weight: bold;");
 	    
 	    int i = 1;
-	    while(topElement.getGenre().charAt(i) != '|'){
-	    	
+	    while(topElement.getGenre().charAt(i) != '|'){	
 	    	i ++;
-	    	
 	    }
 	    
 	    String results = topElement.getGenre().substring(1, i);
@@ -776,9 +815,19 @@ public class TopSeries extends ScrollPane{
 	     
 
 			private void CreateOtherElement(
-					TopElement topElement, int pos) {
+					final TopElement topElement, final int pos) {
 				// TODO Auto-generated method stub
 				
+				Image tick = null;
+				for(int i = 0; i <Preferiti.getInstance().getSeries().size(); i++){
+					
+					if(Preferiti.getInstance().getSeries().get(i).getId().equals(topElement.getId())){
+						
+					 tick= new Image("img/greentick.png", 35, 35, true, true, true);
+						
+						
+					}
+				}
 				
 				final Label poster = new Label();
 			
@@ -788,7 +837,7 @@ public class TopSeries extends ScrollPane{
 				dropShadow.setRadius(3.0);
 				dropShadow.setOffsetX(2.0);
 				dropShadow.setOffsetY(2.0);
-				dropShadow.setColor(Color.LIGHTGRAY);
+				dropShadow.setColor(Color.BLACK);
 				Light.Point light = new Light.Point();
 				light.setX(120);
 				light.setY(100);
@@ -797,26 +846,172 @@ public class TopSeries extends ScrollPane{
 				lighting.setLight(light);
 
 				poster.setEffect(dropShadow);
-				poster.setOnMouseEntered(new EventHandler<MouseEvent>() {
-					public void handle(MouseEvent me) {
-						// change the z-coordinate of the circle
+			
+				 
+				 
+				final Popup popup = CreateTopElementPopUp(topElement, poster, pos);
+				
+				final Timeline timeline = new Timeline();
+				final FadeTransition fadeTransition
+			    = new FadeTransition(Duration.millis(600));
+			    fadeTransition.setNode(popup.getContent().get(0));
+				fadeTransition.setNode(popup.getContent().get(1));
+			       
+					 
+					 
+					   popup.getContent().get(0).setOnMouseEntered(new EventHandler<MouseEvent>() {
+							public void handle(MouseEvent me) {
+								
+								timeline.stop();
+								popup.getContent().get(0).setCursor(Cursor.HAND);
+								
+							}
+						});
+					   
+					   
+					   popup.getContent().get(0).setOnMouseExited(new EventHandler<MouseEvent>() {
+							public void handle(MouseEvent me) {
+								
+					
+								timeline.playFromStart();
+				
+							}
+						});
+					    
+				   
+				   popup.getContent().get(1).setOnMouseEntered(new EventHandler<MouseEvent>() {
+						public void handle(MouseEvent me) {
+							
+							timeline.stop();
+							popup.getContent().get(1).setCursor(Cursor.HAND);
+							
+						}
+					});
+				    
+				   
+				   popup.getContent().get(1).setOnMouseExited(new EventHandler<MouseEvent>() {
+						public void handle(MouseEvent me) {	
+						
+							timeline.playFromStart();		
+							
+						}
+					});
+				    
+				   
 
-						poster.setEffect(null);
-						poster.setCursor(Cursor.HAND);
-						poster.setEffect(lighting);
-					}
-				});
-				poster.setOnMouseExited(new EventHandler<MouseEvent>() {
+				   popup.setOnShowing(new EventHandler<WindowEvent>() {
 
-					public void handle(MouseEvent me) {
+						@Override
+						public void handle(WindowEvent event) {
 
-						poster.setEffect(null);
-						poster.setCursor(null);
-						poster.setEffect(dropShadow);
+							 
+			                  
+								 fadeTransition.setFromValue(0.0);
+								 fadeTransition.setToValue(1.0);
+								 fadeTransition.play();		
 
-					}
-				});
+						}
+				   });
+				  
+				  
+					
+				    poster.setOnMouseEntered(new EventHandler<MouseEvent>() {
+						public void handle(MouseEvent me) {
+							// change the z-coordinate of the circle
+							
+							timeline.stop();
+							if(pos == 1 ){
+							popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() + 150);
+							
+							}
+							
+							if(pos == 2 ){
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  750,  ToolsApp.GetStage().getY() + 150);
+								
+								}
+							if(pos == 3){
+							popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() + 320);
+								
+							}
+							
+							if(pos == 4 ){
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  750,  ToolsApp.GetStage().getY() + 320);
+								
+								}
+							
+							if(pos == 5){
+								
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() + 480);
+							}
+							
+							if(pos == 6 ){
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  750,  ToolsApp.GetStage().getY() + 480);
+								
+								}
+							
+							if(pos == 7){
+								
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() + 700);
+							}
+							
+                            if(pos == 8){
+								
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  750,  ToolsApp.GetStage().getY() + 700);
+							}
+							
+							
+							
+	                        if(pos == 9){
+								
+								popup.show(ToolsApp.GetStage(), ToolsApp.GetStage().getX() +  350,  ToolsApp.GetStage().getY() + 700);
+							}
+	
+							System.out.println( (ToolsApp.GetStage().getX() -  30) + "," + (ToolsApp.GetStage().getY() - 20));
+							System.out.println(me.getScreenX() + "," + me.getScreenY());
+							poster.setCursor(Cursor.HAND);
+							poster.setEffect(null);
+							poster.setEffect(lighting);
+							
+						}
+					});
+				    
+				    
+				    poster.setOnMouseExited(new EventHandler<MouseEvent>() {
 
+						public void handle(MouseEvent me) {
+							
+							
+							timeline.playFromStart();   
+						    poster.setCursor(null);
+						    poster.setEffect(null);
+						    poster.setEffect(dropShadow);
+						    
+						    
+						    
+						}
+					});
+			        
+				    timeline.getKeyFrames().add(
+			                new KeyFrame(Duration.seconds(0.5),
+			                  new EventHandler() {
+			                    // KeyFrame event handler
+			                	
+								@Override
+								public void handle(Event arg0) {
+									// TODO Auto-generated method stub
+									    
+				                        if (timeline.getCurrentTime().greaterThanOrEqualTo(timeline.getTotalDuration())){
+				                                   	
+					                         timeline.stop();
+						                     popup.hide();
+					                        	
+				                        }       
+				                              
+								}		
+								
+			                }));
+			        
+				    
 				Text nome = new Text(topElement.getNome());
 				nome.setFill(Color.WHITE);
 				//nome.setStyle("-fx-font: 14px Verdana;" + "-fx-text-fill: #E3DADE;");
@@ -851,11 +1046,48 @@ public class TopSeries extends ScrollPane{
 
 							}
 						});
-
+				final GridPane element = new GridPane();
 				addLink.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent e) {
+                        
+						Serie serie = new Serie();
+				    	serie.setId(topElement.getId());
+				    	serie.setNome(topElement.getNome());
+				    	serie.setOverview(serie.getOverview());
+				    	serie.loadBanner();
+				    	
+				    	Image tick1= new Image("img/greentick.png", 35, 35, true, true, true);
+				    	Label tickLabel = new Label();
+						tickLabel.setGraphic(new ImageView(tick1));
+						element.add(tickLabel, 1, 1);
+				    	
+				    	
+						if (Preferiti.getInstance().addToPreferiti(serie) == false) {
 
+						addLink.setVisible(false);
+						
+						
+						} else {
+
+							try {
+								FilmistaDb.getInstance().addSeriesToFilmistaDb(
+										serie);
+
+							} catch (ClassNotFoundException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+
+							TabPreferiti.updateTab();
+						}
+				    	
 						System.out.println("This link is clicked");
 
 					}
@@ -863,7 +1095,7 @@ public class TopSeries extends ScrollPane{
 
 				// insert element into layouts
 
-				GridPane element = new GridPane();
+				
 				FlowPane title = new FlowPane(Orientation.HORIZONTAL);
 				VBox vbox = new VBox();
 
@@ -878,6 +1110,17 @@ public class TopSeries extends ScrollPane{
 				element.add(poster, 0, 0, 1, 2);
 				element.setVgrow(element, Priority.ALWAYS);
 				element.add(vbox, 1, 0);
+				
+				if(tick != null){
+					
+					Label tickLabel = new Label();
+					tickLabel.setGraphic(new ImageView(tick));
+					element.add(tickLabel, 1, 1);
+					
+					
+					
+					
+				}
 				
 			 
 

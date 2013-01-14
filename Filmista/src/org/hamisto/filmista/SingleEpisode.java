@@ -1,13 +1,27 @@
 package org.hamisto.filmista;
 
+import org.transdroid.daemon.Torrent;
+
 public class SingleEpisode{
+	
+	   Torrent torrent;  //torrent
        String episodeNumber;
        String episodeName;
        String first_Aired;
        String filename; 
 	public SingleEpisode(){
 		
+		
 	}
+	
+	
+	public Torrent getTorrent() {
+		return torrent;
+	}
+	public void setTorrent(Torrent torrent) {
+		this.torrent = torrent;
+	}
+	
 	public String getEpisodeName() {
 		return episodeName;
 	}

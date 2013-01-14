@@ -27,6 +27,10 @@ import javafx.stage.Modality;
 import org.hamisto.database.FilmistaDb;
 import org.hamisto.filmista.Serie;
 
+import search.daemon.DaemonManager;
+import search.find.Search;
+import search.find.SearchListener;
+
 public class SerieInfo extends BorderPane {
 
 	private final String LABEL_STYLE = "-fx-text-fill: black; -fx-font-size: 14; "
@@ -83,16 +87,16 @@ public class SerieInfo extends BorderPane {
 
 			name = serie.getNome();
 		}
-
+        
 		Label nome = new Label(name);
 		nome.setTextFill(Color.BLACK);
 		nome.setFont(Font.font("Helvetica", 28));
 
-		Button btn = new Button("Aggiungi");
-		String buttonCss = SerieInfo.class.getResource("CustomButton.css")
+		final Button btn = new Button("   Add   ");
+		/*String buttonCss = SerieInfo.class.getResource("CustomButton.css")
 				.toExternalForm();
-		btn.getStylesheets().add(buttonCss);
-		btn.getStyleClass().add("record-sales");
+		btn.getStylesheets().add(buttonCss);*/
+		btn.getStyleClass().add("custom-browse");
 		btn.setCursor(Cursor.HAND);
 		btn.setTextFill(Color.WHITE);
 
@@ -110,33 +114,42 @@ public class SerieInfo extends BorderPane {
 									serie);
 
 						} else {
-
-							try {
-								FilmistaDb.getInstance().addSeriesToFilmistaDb(
-										serie);
-
-							} catch (ClassNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-
+							
+							btn.setDisable(true);
+                            //torrent...
+							DaemonManager manager = new DaemonManager();
+							Search search = new Search(serie, manager, "ENG", new SearchListener() {
+								
+								@Override
+								public void SearchListener() {
+									try {
+									
+									FilmistaDb.getInstance().addSeriesToFilmistaDb(serie);
+								} catch (ClassNotFoundException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+									
+								}
+							});
 							TabPreferiti.updateTab();
 						}
-					}
-				});
+	 		        }
+	 		});
 
 		flow.getChildren().add(btn);
 		flow.getChildren().add(nome);
 
 		if (Preferiti.getInstance().series.contains(serie) == true) {
 
-			btn.setText("In Lista");
+			btn.setText("  Added  ");
+			btn.setDisable(true);
 			star.setVisible(true);
 		}
 
@@ -162,7 +175,7 @@ public class SerieInfo extends BorderPane {
 		this.setCenter(grid);
 
 		String customCss = SerieInfo.class.getResource("CustomBorder.css")
-				.toExternalForm();
+			.toExternalForm();
 		this.getStylesheets().add(customCss);
 		this.getStyleClass().add("custom-border");
 
