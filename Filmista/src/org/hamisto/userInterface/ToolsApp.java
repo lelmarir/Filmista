@@ -131,7 +131,7 @@ public class ToolsApp extends Application {
 					
 					
 					        pr = new ProcessBuilder(System.getProperty("user.home")+
-							"/Downloads/transmission-2.50/build/Release/transmission-daemon")
+							"/Downloads/transmission-2.50/build/Release/transmission-daemon".replace("/", System.getProperty("file.separator")))
 							.start();
 
 				} catch (IOException e) {
@@ -147,11 +147,12 @@ public class ToolsApp extends Application {
 
 			@Override
 			public void handle(WindowEvent event) {
-                
-				
 				try {
-					pr = Runtime.getRuntime().exec(
-							"killall transmission-daemon");
+					Runtime rt = Runtime.getRuntime();
+					if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) 
+					     rt.exec("taskkill /IM transmission-daemon.exe /F");
+					   else
+					     rt.exec("kill transmission-daemon");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
