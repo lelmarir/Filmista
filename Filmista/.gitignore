@@ -37,9 +37,9 @@
 Icon?
 ehthumbs.db
 Thumbs.db
-/image
+/image/*.png
 /DbPreferiti.h2.db
 /DbPreferiti.trace.db
-/imageTop
+/imageTop/*.png
 
 *.db
