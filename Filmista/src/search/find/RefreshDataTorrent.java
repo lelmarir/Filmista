@@ -32,7 +32,7 @@ public class RefreshDataTorrent  {
 			
 		  timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-		        
+		       
 			    DaemonManager manager = new DaemonManager();
 			    TorrentSeriesElement.getInstance().getTorrents().clear();
 			    List<Torrent> torrentFile;
@@ -43,9 +43,12 @@ public class RefreshDataTorrent  {
 			    }
 			    
 			    TorrentSeriesElement.getInstance().getTorrents().addAll(torrentFile);
+			    
 				for (int i = 0; i < TorrentSeriesElement.getInstance().getTorrents().size(); i++) {
 					
 				//nome, percentuale, dimensione, velocità
+					 
+				
                     
 					long size =TorrentSeriesElement.getInstance().getTorrents().get(i).getTotalSize();
 					String size2;
