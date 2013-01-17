@@ -2,9 +2,6 @@ package search.daemon;
 
 import java.util.List;
 
-import org.hamisto.database.FilmistaDb;
-import org.hamisto.userInterface.TabDownload;
-import org.hamisto.userInterface.TabImpostazioni;
 import org.transdroid.daemon.Daemon;
 import org.transdroid.daemon.DaemonSettings;
 import org.transdroid.daemon.IDaemonAdapter;
@@ -15,22 +12,12 @@ import org.transdroid.daemon.task.AddByMagnetUrlTask;
 import org.transdroid.daemon.task.DaemonTaskResult;
 import org.transdroid.daemon.task.GetTorrentDetailsTask;
 import org.transdroid.daemon.task.PauseAllTask;
-import org.transdroid.daemon.task.PauseTask;
+import org.transdroid.daemon.task.RemoveTask;
 import org.transdroid.daemon.task.ResumeAllTask;
 import org.transdroid.daemon.task.RetrieveTask;
 import org.transdroid.daemon.task.RetrieveTaskSuccessResult;
 
 import android.os.Bundle;
-
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class DaemonManager {
 	public IDaemonAdapter client;
@@ -45,7 +32,15 @@ public class DaemonManager {
 	public IDaemonAdapter getClient() {
 		return client;
 	}
-
+    
+	public void RemoveTorrent(Torrent torrent){
+		
+		RemoveTask.create(client, torrent, false).execute();
+		
+		
+		
+		
+	}
 	public Torrent AddMagnet(String magnet){
 		Bundle bundle = new Bundle();
 		bundle.putString("URL", magnet);
@@ -61,13 +56,19 @@ public class DaemonManager {
 		return null;
 	}
 
+	
 	public List<Torrent> retrieveTorrentList(){
-		RetrieveTask retrieveTask = new RetrieveTask(this.client);
-		RetrieveTaskSuccessResult retrieveTaskResult = (RetrieveTaskSuccessResult) retrieveTask.execute();
-		List<Torrent> retrievedTorrents = retrieveTaskResult.getTorrents();
-		if(retrieveTaskResult.wasSuccessful()) return retrievedTorrents;
-		else return null;
-	}
+		 RetrieveTask retrieveTask = new RetrieveTask(this.client);
+		 DaemonTaskResult dtr = retrieveTask.execute();
+		 if (dtr.wasSuccessful()){
+		 RetrieveTaskSuccessResult retrieveTaskResult = (RetrieveTaskSuccessResult) dtr;
+		 List<Torrent> retrievedTorrents = retrieveTaskResult.getTorrents();
+		 if(retrieveTaskResult.wasSuccessful()) return retrievedTorrents;
+		 
+		 else return null;
+		 }
+		 else return null;
+		 }
 
 	public Torrent AddTorrentUrl(String url){
 		Bundle bundle = new Bundle();
@@ -108,6 +109,8 @@ public class DaemonManager {
 		this.client = new TransmissionAdapter(settings);
 
 	}
+	
+	
 	/*
 	private void CreateClient(String downloadDir){
 		DaemonSettings settings = this.createSettings(downloadDir);
@@ -129,7 +132,7 @@ public class DaemonManager {
 	}
 */
 
-
+    
 
 
 
@@ -153,11 +156,11 @@ public class DaemonManager {
 		String username = null;
 		String password = null;
 		String extraPass = null;
-		OS os = OS.Windows;
-		String downloadDir = "/home/Manuel Mantovani/Downloads";
+		OS os = OS.Mac;
+		String downloadDir = "/Users/mohamedchajii/Documents";
 		//String downloadDir = "download";
-		//String downloadDir = TabImpostazioni.downloadPath.getText();
-		System.out.println(downloadDir);
+	    //String downloadDir = TabImpostazioni.downloadPath.getText();
+		//System.out.println(downloadDir);
 		String ftpUrl = null;
 		String ftpPassword = null;
 		int timeout = 30;

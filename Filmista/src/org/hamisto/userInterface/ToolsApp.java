@@ -4,6 +4,7 @@ package org.hamisto.userInterface;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,6 +12,7 @@ import java.util.concurrent.Executors;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
@@ -46,12 +48,17 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.shape.VLineTo;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import org.hamisto.database.FilmistaDb;
+import org.transdroid.daemon.Torrent;
+
+import search.daemon.DaemonManager;
+import search.find.RefreshDataTorrent;
 
 /**
  * @author Jasper Potts
@@ -70,9 +77,15 @@ public class ToolsApp extends Application {
 	private int nextToolIndex;
 	private DoubleProperty arrowH = new SimpleDoubleProperty(200);
 	
+	//image for effect
+    static ToggleButton buttonArrow;
+	
 	
 	//daemon process
 	public static Process pr;
+	
+	//update thread 
+    RefreshDataTorrent updateTorrents;
 
 	// thread
 	private static ExecutorService executorPool;
@@ -98,6 +111,7 @@ public class ToolsApp extends Application {
 	static Stage GetStage() {
 
 		return ToolsApp.stage;
+		
 
 	}
 
@@ -113,21 +127,35 @@ public class ToolsApp extends Application {
 	public void start(final Stage primaryStage) throws IOException {
         
 	
+		
+		primaryStage.setOnShown(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				
+				
+				//updateTorrents = new RefreshDataTorrent();
+			}
+		});
+		
+		primaryStage.setResizable(false);
 		primaryStage.setOnShowing(new EventHandler<WindowEvent>() {
 
 			@Override
 			public void handle(WindowEvent event) {
 				
+			   
                FilmistaDb.getInstance().view();
                System.out.println("Dimensione Table Top: " + FilmistaDb.getInstance().numbRecordTopSeries());
-               if(FilmistaDb.getInstance().numbRecordTopSeries() == 10){
+               if(FilmistaDb.getInstance().numbRecordTopSeries() == 7){
             	   
             	   
                TopSeries.updateSeriesTop(FilmistaDb.getInstance().getTopElementData());
+              
                
                }
 
-				try {
+			try {
 					
 					
 					        pr = new ProcessBuilder(System.getProperty("user.home")+
@@ -138,27 +166,35 @@ public class ToolsApp extends Application {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+					
+					
+				
+					
+				
 
 			}
 
 		});
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
+           
 			@Override
 			public void handle(WindowEvent event) {
+				
+			
+			
 				try {
 					Runtime rt = Runtime.getRuntime();
 					if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) 
 					     rt.exec("taskkill /IM transmission-daemon.exe /F");
 					   else
-					     rt.exec("kill transmission-daemon");
+					     rt.exec("killall transmission-daemon");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				
+			
 				FilmistaDb.getInstance().updateOrdinamentoFilmistaDb(
 						TabPreferiti.cb.getSelectionModel().getSelectedItem()
 								.toString());
@@ -172,11 +208,11 @@ public class ToolsApp extends Application {
 
 		Tool[] baseTools = new Tool[] {
 
-				new Tool("Preferiti", new TabPreferiti(),
+				new Tool("Favorite", new TabPreferiti(),
 						new Image(ToolsApp.class
 								.getResourceAsStream("images/Fevorite.png"),
 								65, 65, true, true)),
-				new Tool("Cerca", new TabCerca(),
+				new Tool("Search", new TabCerca(),
 						new Image(ToolsApp.class
 								.getResourceAsStream("images/Search.png"), 65,
 								65, true, true)),
@@ -184,12 +220,40 @@ public class ToolsApp extends Application {
 						new Image(ToolsApp.class
 								.getResourceAsStream("images/trophy.png"), 65,
 								65, true, true)),
-				new Tool("Impostazioni", new TabImpostazioni(), new Image(
+				new Tool("Settings", new TabImpostazioni(), new Image(
 						ToolsApp.class.getResourceAsStream("images/Tools.png"),
 						65, 65, true, true)),
-			    new Tool("Download", new TabDownload(), new Image(
+			    new Tool("Download", new TabDownload(new DownloadUpdateListener() {
+					
+					@Override
+					public void UpdateDone(final List<Torrent> torrents) {
+						// TODO Auto-generated method stub
+						
+						System.out.println("ce l'ho fatta");
+						Platform.runLater(new Runnable() {
+
+							@Override
+							public void run() {
+						
+						TabDownload.updateTabDownload(torrents);
+							}
+						});
+						
+					}
+				}), new Image(
 						ToolsApp.class.getResourceAsStream("images/Download.png"),
-						65, 65, true, true)),		
+						65, 65, true, true)),
+						
+			
+				
+			/*	new Tool( new Image(
+						ToolsApp.class.getResourceAsStream("images/images.png"),
+						65, 65, true, true)),
+						
+				new Tool("Trash", new TabDownload(), new Image(
+						ToolsApp.class.getResourceAsStream("images/Recyclebinempty.png"),
+						65, 65, true, true))	*/
+						
 
 		};
 		ServiceLoader toolLoader = ServiceLoader.load(Tool.class);
@@ -231,8 +295,11 @@ public class ToolsApp extends Application {
 		toolBar.setClip(createToolBarPath(Color.BLACK, null));
 		ToggleGroup toggleGroup = new ToggleGroup();
 		for (int i = 0; i < tools.length; i++) {
+			if((tools[i].getContent() != null) &&  (tools[i].getName() != null) && (tools[i].getIcon() != null))
+			{
 			final int index = i;
 			final Tool tool = tools[i];
+		    
 			final ToggleButton button = new ToggleButton(tool.getName()
 					.replace(' ', '\n'));
 			ImageView icon = new ImageView(tool.getIcon());
@@ -252,10 +319,11 @@ public class ToolsApp extends Application {
 			if (i == 0)
 				button.setSelected(true);
 			button.setMaxWidth(Double.MAX_VALUE);
+		
 			button.setAlignment(Pos.CENTER);
 			button.setTextAlignment(TextAlignment.CENTER);
 			button.setToggleGroup(toggleGroup);
-
+             
 			button.setCursor(Cursor.HAND);
 			button.setOnKeyReleased(new EventHandler<KeyEvent>() {
 				@Override
@@ -276,14 +344,58 @@ public class ToolsApp extends Application {
 				@Override
 				public void handle(ActionEvent t) {
 
+					
 					button.setSelected(true);
 					switchTool(tool, index);
 
 				}
 
 			});
+			
 			toolBar.getChildren().add(button);
+			}
+			else{
+				
+				final ToggleButton button = new ToggleButton();
+				toolBar.getChildren().add(button);
+				
+				
+if(tools[i].getIcon() != null){
+					
+					
+				    buttonArrow = new ToggleButton();
+					toolBar.getChildren().add(buttonArrow);
+					ImageView icon = new ImageView(tools[i].getIcon());
+					buttonArrow.setGraphic(icon);
+					//buttonArrow.setVisible(true);
+					//buttonArrow.setAlignment(Pos.CENTER);
+					//buttonArrow.setMaxWidth(Double.MAX_VALUE);
+					/*pathTransition = new PathTransition();  
+				    pathTransition.setDuration(Duration.seconds(1.0));  
+				    MoveTo moveTo = new MoveTo();
+				    moveTo.setX(50);
+			        moveTo.setY(+30);
+			        VLineTo lineTo = new VLineTo();
+			        lineTo.setY(45);
+					final Path path = new Path();
+					path.getElements().add(moveTo);
+			        path.getElements().add(lineTo);
+				    pathTransition.setPath(path);  
+				    pathTransition.setNode(buttonArrow);  
+				    pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);  
+				    pathTransition.setCycleCount(Timeline.INDEFINITE);  
+				    pathTransition.setAutoReverse(true); 
+		          /*  buttonArrow.setStyle("-fx-background-position: center;" +
+		            		" -fx-background-repeat: no-repeat;");		*/	
+					
+				}
+				
+				
+			}
+			
 		}
+		
+		
 
 		currentPane = new StackPane();
 		currentPane.getChildren().setAll(tools[0].getContent());
@@ -304,7 +416,14 @@ public class ToolsApp extends Application {
 		primaryStage.show();
 
 		ToolsApp.stage = primaryStage;
+
+		
+		
+		
 	}
+		
+	
+	
 
 	private Path createToolBarPath(Paint fill, Paint stroke) {
 		Path toolBarBackground = new Path();

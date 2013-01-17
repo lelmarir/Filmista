@@ -18,8 +18,10 @@ public class TopElement {
 	private String rating;
 	private Image poster;
 	private String idImdb;
+	private String year;
 	
 	
+
 
 
 	public TopElement() {
@@ -97,5 +99,16 @@ public class TopElement {
 	public void setIdImdb(String idImdb) {
 		this.idImdb = idImdb;
 	}
+	
+	public String getYear() {
+		return year;
+	}
+
+
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 
 }

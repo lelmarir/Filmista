@@ -19,7 +19,6 @@ import java.util.List;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import javax.imageio.ImageIO;
 
@@ -121,6 +120,7 @@ public class FilmistaDb {
 					"Runtime varchar(30)," +
 					"Status varchar(30)," +
 					"Rating varchar (10)," +
+					"Year varchar(30)," +
 					"Image varchar(30)," +
 					"primary key(Id))";
 			stat.executeUpdate(tabTopSeries);
@@ -244,6 +244,8 @@ public class FilmistaDb {
 	}
 		
 	}
+	
+	
 	
 	public void updateSettingPar(){
 		
@@ -519,8 +521,8 @@ public class FilmistaDb {
 		saveImage(element.getPoster(), destinationFile);
 
 		PreparedStatement pstmt = conn
-				.prepareStatement("INSERT into TOPSERIES(Id, Imdb, Nome, Overview, Genre, Runtime, Status, Rating, Image)"
-						+ "values(?,?,?,?,?,?,?,?,?)");
+				.prepareStatement("INSERT into TOPSERIES(Id, Imdb, Nome, Overview, Genre, Runtime, Status, Rating, Year, Image)"
+						+ "values(?,?,?,?,?,?,?,?,?,?)");
 		pstmt.setString(1, element.getId());
 		pstmt.setString(2, element.getIdImdb());
 		pstmt.setString(3, element.getNome());
@@ -529,7 +531,8 @@ public class FilmistaDb {
 		pstmt.setString(6, element.getRuntime());
 		pstmt.setString(7, element.getStatus());
 		pstmt.setString(8, element.getRating());
-		pstmt.setString(9, destinationFile);
+		pstmt.setString(9, element.getYear());
+		pstmt.setString(10, destinationFile);
 		
 		pstmt.executeUpdate();
 
@@ -551,8 +554,10 @@ public class FilmistaDb {
 			res = stat.executeQuery(query);
 
 			while (res.next()) {
-
+                
+				
 				TopElement element = new TopElement();
+				System.out.println(res.getString("Nome"));
 				element.setId(res.getString("Id"));
 				element.setIdImdb(res.getString("Imdb"));
 				element.setNome(res.getString("Nome"));
@@ -561,6 +566,7 @@ public class FilmistaDb {
 				element.setRuntime(res.getString("Runtime"));
 				element.setStatus(res.getString("Status"));
 				element.setRating(res.getString("Rating"));
+				element.setYear(res.getString("Year"));
 				String imagePath = res.getString("Image");
 
 				Image image = null;

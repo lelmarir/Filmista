@@ -220,7 +220,7 @@ public class TabImpostazioni extends VBox{
 		
 		enFlag = new Label();
 		enFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
-				.getResourceAsStream("images/images.png"), 40, 40, true, true)));
+				.getResourceAsStream("images/EnglishFlag.jpg"), 40, 40, true, true)));
 		itaFlag = new Label();
 		itaFlag.setGraphic(new ImageView(new Image(TabImpostazioni.class
 				.getResourceAsStream("images/Italy_flag.gif"), 40, 40, true,

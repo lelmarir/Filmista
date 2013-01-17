@@ -1,7 +1,6 @@
 package org.hamisto.filmista;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -49,21 +48,24 @@ public class TopParsingTvDb {
 			if(tops == null){
 				
 				tops = FilmistaDb.getInstance().getTopElementData();
-				if (tops.size() != 10)
+				
+			}
+				System.out.println("Dimensione tops:" + tops.size());
+				
+				if (tops.size() != 7)
 				{
 					
 					alreadyUpdate = false;
 				}
 				
 				else{
-					for(int i = 0; i < TopParsingImdb.getInstance().getTop().size()
-			
-						; i++){
+					for(int i = 0; i < TopParsingImdb.getInstance().getTop().size(); i++)
+					{
 					
 					
 					if(tops.get(i).getIdImdb().equals(TopParsingImdb.getInstance().getTop().get(i))){
 						
-					
+					System.out.println("CONTROLLO SERIE OK");
 						
 					}
 					else{
@@ -74,9 +76,9 @@ public class TopParsingTvDb {
 					
 					
 				}
-				}
+		}
 				
-			}
+			
 			if(alreadyUpdate == false){
 		
 			ExecutorService executorPool = TopParsingTvDb.getThreadPool();
@@ -98,6 +100,7 @@ public class TopParsingTvDb {
 				Node runtimeNode = null;
 				Node statusNode = null;
 				Node ratingNode = null;
+				Node yearNode = null;
 
 				DocumentBuilder db = TopParsingTvDb.getDocumentBuilder();
 				try {
@@ -112,6 +115,7 @@ public class TopParsingTvDb {
 					runtimeNode = doc.getElementsByTagName("Runtime").item(0);
 					statusNode = doc.getElementsByTagName("Status").item(0);
 					ratingNode = doc.getElementsByTagName("Rating").item(0);
+					yearNode = doc.getElementsByTagName("FirstAired").item(0);
 
 				} catch (SAXException e) {
 					e.printStackTrace();
@@ -125,7 +129,6 @@ public class TopParsingTvDb {
 				
 				element.setIdImdb(TopParsingImdb
 						.getInstance().Top.get(i));
-				System.out.println(element.getIdImdb());
 				element.setId(id);
 				element.setNome(nameNode.getTextContent());
 				element.setOverview(overviewNode.getTextContent());
@@ -135,13 +138,13 @@ public class TopParsingTvDb {
 				element.setRating(ratingNode.getTextContent());
 				element.setShortOverview(createShortOverview(overviewNode
 						.getTextContent()));
+				element.setYear(yearNode.getTextContent());
 				
 				
 				Runnable job = new Runnable() {
 					@Override
 					public void run() {
                         
-						System.out.println("id tvdb:" + id + "id Imdb:" + element.getIdImdb());
 						element.setPoster(LoadPoster(id));
 
 					}
@@ -171,13 +174,11 @@ public class TopParsingTvDb {
 				
 			}
 
-		done(tops);
+		
 			}
-			else{
-				
-				done(tops);
-			}
-
+			
+			done(tops);
+	
 	}
 		private String createShortOverview(String overview) {
 			// TODO Auto-generated method stub

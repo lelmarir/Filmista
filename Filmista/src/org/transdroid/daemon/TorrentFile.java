@@ -37,7 +37,7 @@ public final class TorrentFile implements Parcelable, Comparable<TorrentFile> {
 	private final String name;
 	private final String relativePath;
 	private final String fullPath;
-	private final long totalSize;
+    long totalSize;
 	private final long downloaded;
 	private Priority priority;
 

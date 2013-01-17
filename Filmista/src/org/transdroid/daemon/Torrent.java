@@ -1,5 +1,5 @@
 /*
- *	This file is part of Transdroid <http://www.transdroid.org>
+ *  This file is part of Transdroid <http://www.transdroid.org>
  *	
  *	Transdroid is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import android.os.Parcelable;
  * @author erickok
  *
  */
+
 public final class Torrent implements Parcelable, Comparable<Torrent> {
 
 	final private long id;
@@ -55,6 +56,31 @@ public final class Torrent implements Parcelable, Comparable<Torrent> {
 	final private Date dateAdded;
 	final private Date dateDone;
 	final private String error;
+	
+	double percentuale;
+	String velDown;
+	String dimensione;
+	 
+	 
+	
+	public double getPercentuale() {
+		return percentuale;
+	}
+	public void setPercentuale(double percentuale) {
+		this.percentuale = percentuale;
+	}
+	public String getVelDown() {
+		return velDown;
+	}
+	public void setVelDown(String velDown) {
+		this.velDown = velDown;
+	}
+	public String getDimensione() {
+		return dimensione;
+	}
+	public void setDimensione(String dimensione) {
+		this.dimensione = dimensione;
+	}
 	
 	//public long getID() { return id; }
 	//public String getHash() { return hash; }

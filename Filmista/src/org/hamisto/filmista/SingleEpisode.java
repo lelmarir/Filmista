@@ -2,7 +2,9 @@ package org.hamisto.filmista;
 
 import org.transdroid.daemon.Torrent;
 
-public class SingleEpisode{
+import search.find.TorrentListener;
+
+public class SingleEpisode {
 	
 	   Torrent torrent;  //torrent
        String episodeNumber;
@@ -18,6 +20,8 @@ public class SingleEpisode{
 	public Torrent getTorrent() {
 		return torrent;
 	}
+	
+	
 	public void setTorrent(Torrent torrent) {
 		this.torrent = torrent;
 	}

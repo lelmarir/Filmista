@@ -10,18 +10,21 @@ import org.transdroid.daemon.Torrent;
 import com.sun.javafx.tk.Toolkit.Task;
 
 public class Refresh extends Thread {
+	
+	
+	 
 	    public Refresh(){
 	         Refresh.go();
 	    }
 	
 public static void go() {
 
-    
+         
 
 		int delay = 1000;   // delay for - no delay
 		int period = 3000;
-		Timer timer = new Timer();
-
+	   Timer  timer = new Timer();
+        
 		timer.scheduleAtFixedRate(new TimerTask() {
 		        public void run() {
 		            DaemonManager manager = new DaemonManager();
@@ -41,7 +44,7 @@ public static void go() {
 		            	//else percent = Float.toString(percentage).replace(".", "").substring(0, 3); //restituisce X%
 		            	
 		            	int speed = torrents.get(i).getRateDownload()/1000;
-		            	String speed2 = Integer.toString(speed); //Velocità kB/s
+		            	String speed2 = Integer.toString(speed); //Velocitï¿½ kB/s
 		            	
 		            	System.out.println(name + size2 + percentage + speed2);
 		       

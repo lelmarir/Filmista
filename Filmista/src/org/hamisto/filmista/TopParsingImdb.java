@@ -90,7 +90,7 @@ public class TopParsingImdb {
 				XPathFactory factory = XPathFactory.newInstance();
 
 				XPath xPath = factory.newXPath();
-				String pattern = "//tr[position()< 12]/td[@class='title']/a/@href[1]";
+				String pattern = "//tr[position()< 9]/td[@class='title']/a/@href[1]";
 
 				NodeList nodes = null;
 				try {

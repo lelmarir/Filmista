@@ -3,12 +3,14 @@ package org.hamisto.userInterface;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
@@ -87,15 +89,20 @@ public class SerieInfo extends BorderPane {
 
 			name = serie.getNome();
 		}
-        
+
 		Label nome = new Label(name);
 		nome.setTextFill(Color.BLACK);
 		nome.setFont(Font.font("Helvetica", 28));
 
-		final Button btn = new Button("   Add   ");
-		/*String buttonCss = SerieInfo.class.getResource("CustomButton.css")
-				.toExternalForm();
-		btn.getStylesheets().add(buttonCss);*/
+		final Button btn = new Button("  Add   ");
+		ImageView imageview = new ImageView(new Image("img/add.png", 12, 12,
+				true, true, true));
+		btn.setGraphic(imageview);
+		btn.setContentDisplay(ContentDisplay.LEFT);
+		/*
+		 * String buttonCss = SerieInfo.class.getResource("CustomButton.css")
+		 * .toExternalForm(); btn.getStylesheets().add(buttonCss);
+		 */
 		btn.getStyleClass().add("custom-browse");
 		btn.setCursor(Cursor.HAND);
 		btn.setTextFill(Color.WHITE);
@@ -109,39 +116,171 @@ public class SerieInfo extends BorderPane {
 
 						if (Preferiti.getInstance().addToPreferiti(serie) == false) {
 
-							new MyDialog(Guiseries2.stage,
-									Modality.APPLICATION_MODAL, "Warning!",
-									serie);
+							/*
+							 * new MyDialog(Guiseries2.stage,
+							 * Modality.APPLICATION_MODAL, "Warning!", serie);
+							 */
 
 						} else {
-							
+
 							btn.setDisable(true);
-                            //torrent...
+							btn.setText("  Added  ");
+							btn.setGraphic(null);
+							// torrent...
 							DaemonManager manager = new DaemonManager();
-							Search search = new Search(serie, manager, "ENG", new SearchListener() {
-								
-								@Override
-								public void SearchListener() {
-									try {
-									
-									FilmistaDb.getInstance().addSeriesToFilmistaDb(serie);
-								} catch (ClassNotFoundException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								} catch (SQLException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-									
-								}
-							});
-							TabPreferiti.updateTab();
+							Search search = new Search(serie, manager, "ENG",
+									new SearchListener() {
+
+										@Override
+										public void SearchListener() {
+											Platform.runLater(new Runnable() {
+
+												@Override
+												public void run() {
+
+													boolean compare = false;
+													for (int i = 0; i < serie
+															.getStagioni()
+															.size(); i++) {
+
+														for (int j = 0; j < serie
+																.getStagioni()
+																.get(i)
+																.getEpisodiStagione()
+																.size(); j++) {
+
+															compare = false;
+
+															if ((serie
+																	.getStagioni()
+																	.get(i)
+																	.getEpisodiStagione()
+																	.get(j)
+																	.getTorrent() != null)) {
+																for (int k = (1 + j); k < serie
+																		.getStagioni()
+																		.get(i)
+																		.getEpisodiStagione()
+																		.size(); k++) {
+
+																	if (serie
+																			.getStagioni()
+																			.get(i)
+																			.getEpisodiStagione()
+																			.get(k)
+																			.getTorrent() != null) {
+																		if (serie
+																				.getStagioni()
+																				.get(i)
+																				.getEpisodiStagione()
+																				.get(j)
+																				.getTorrent()
+																				.getName()
+																				.equals(serie
+																						.getStagioni()
+																						.get(i)
+																						.getEpisodiStagione()
+																						.get(k)
+																						.getTorrent()
+																						.getName())) {
+
+																			compare = true;
+																		}
+																	}
+																}
+
+																if (compare == false) {
+
+																	TorrentSeriesElement
+																			.getInstance()
+																			.addToTorrents(
+																					serie.getStagioni()
+																							.get(i)
+																							.getEpisodiStagione()
+																							.get(j)
+																							.getTorrent());
+																	if ((TorrentSeriesElement
+																			.getInstance().torrents
+																			.indexOf(serie
+																					.getStagioni()
+																					.get(i)
+																					.getEpisodiStagione()
+																					.get(j)
+																					.getTorrent()) % 2) == 0) {
+
+																		TabDownload.mainDownload
+																				.getChildren()
+																				.add(TabDownload
+																						.addTorrentEvenToDownloadTab(serie
+																								.getStagioni()
+																								.get(i)
+																								.getEpisodiStagione()
+																								.get(j)
+																								.getTorrent()));
+
+																	}
+
+																	else {
+
+																		TabDownload.mainDownload
+																				.getChildren()
+																				.add(TabDownload
+																						.addTorrentOddToDownloadTab(serie
+																								.getStagioni()
+																								.get(i)
+																								.getEpisodiStagione()
+																								.get(j)
+																								.getTorrent()));
+																	}
+
+																	System.out
+																			.println(serie
+																					.getStagioni()
+																					.get(i)
+																					.getEpisodiStagione()
+																					.get(j)
+																					.getTorrent()
+																					.getName());
+
+																}
+															}
+
+														}
+
+													}
+
+													try {
+
+														FilmistaDb
+																.getInstance()
+																.addSeriesToFilmistaDb(
+																		serie);
+													} catch (ClassNotFoundException e1) {
+														// TODO Auto-generated
+														// catch
+														// block
+														e1.printStackTrace();
+													} catch (IOException e1) {
+														// TODO Auto-generated
+														// catch
+														// block
+														e1.printStackTrace();
+													} catch (SQLException e1) {
+														// TODO Auto-generated
+														// catch
+														// block
+														e1.printStackTrace();
+													}
+
+													TabPreferiti.updateTab();
+												}
+
+											});
+										}
+									});
 						}
-	 		        }
-	 		});
+					}
+				});
 
 		flow.getChildren().add(btn);
 		flow.getChildren().add(nome);
@@ -151,6 +290,7 @@ public class SerieInfo extends BorderPane {
 			btn.setText("  Added  ");
 			btn.setDisable(true);
 			star.setVisible(true);
+			btn.setGraphic(null);
 		}
 
 		grid.setHgap(25);
@@ -175,7 +315,7 @@ public class SerieInfo extends BorderPane {
 		this.setCenter(grid);
 
 		String customCss = SerieInfo.class.getResource("CustomBorder.css")
-			.toExternalForm();
+				.toExternalForm();
 		this.getStylesheets().add(customCss);
 		this.getStyleClass().add("custom-border");
 

@@ -1,5 +1,7 @@
 package org.hamisto.userInterface;
 
+
+
 import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +25,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -31,7 +37,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Popup;
 import javafx.util.Duration;
 
 import org.hamisto.database.FilmistaDb;
@@ -59,6 +64,7 @@ public class TabPreferiti extends ScrollPane{
 	public TabPreferiti() {
 		
 		
+		
 		this.getStyleClass().add("tab-background");
 		this.setPrefHeight(700.0); 
 		this.setPrefWidth(1035.0);
@@ -66,6 +72,13 @@ public class TabPreferiti extends ScrollPane{
 
 		mainLayout = new FlowPane();
 		cb = new ChoiceBox();
+		cb.setStyle(" -fx-background-color:" + 
+        "#000000," + 
+        "linear-gradient(#7ebcea, #2f4b8f)," + 
+        "linear-gradient(#426ab7, #263e75)," + 
+        "linear-gradient(#395cab, #223768);" + 
+        "-fx-text-base-color: white;");
+	
 		order = new Label();
 		border = new BorderPane();
 
@@ -148,6 +161,7 @@ public class TabPreferiti extends ScrollPane{
 				.equals("Last Added") == true) {
 
 			orderByLastAdded();
+	
 		}
 
 		if (cb.getSelectionModel().getSelectedItem().toString()
@@ -244,6 +258,8 @@ public class TabPreferiti extends ScrollPane{
 		final Label image;
 		final Text title;
 
+		
+		
 		final DropShadow dropShadow = new DropShadow();
 		dropShadow.setOffsetX(10);
 		dropShadow.setOffsetY(10);
@@ -251,40 +267,19 @@ public class TabPreferiti extends ScrollPane{
 
 		final String style_inner = "-fx-font: Gill Sans;"
 				+ "-fx-font-family: Gill Sans;"
-				+ "-fx-effect: dropshadow(one-pass-box, gray, 8, 0, 4, 4);";
+				+ "-fx-effect: dropshadow(one-pass-box, black, 8, 0, 4, 4);";
 
-		final String style_inner2 = "-fx-effect: dropshadow(one-pass-box, gray, 12, 0, 8, 8);";
+		final String style_inner2 = "-fx-effect: innershadow(one-pass-box, lightgray, 0, 0, 0, 0);";
 
 		image = new Label();
-		final Tooltip tooltip = new Tooltip(serie.getNome());
-		//tooltip.show(image, (e.getScreenX() ), (e.getScreenY() + 15.0));
+				
 		
-		
-		final Timeline timeline = new Timeline();
+	
 		
 		
 		
 		
-		   timeline.getKeyFrames().add(
-	                new KeyFrame(Duration.seconds(2.0),
-	                  new EventHandler() {
-	                    // KeyFrame event handler
-	                	
-						@Override
-						public void handle(Event arg0) {
-							// TODO Auto-generated method stub
-							    
-		                        if (timeline.getCurrentTime().greaterThanOrEqualTo(timeline.getTotalDuration())){
-		                                   	
-		                        	 
-			                         timeline.stop();
-			                         
-			                        	
-		                        }       
-		                              
-						}		
-						
-	                }));
+		 
 		
 		image.addEventHandler(MouseEvent.MOUSE_ENTERED,
 				new EventHandler<MouseEvent>() {
@@ -293,9 +288,9 @@ public class TabPreferiti extends ScrollPane{
 				
 			
 					
-				 System.out.println("Sto entrando con il mouse");
+			   
 				
-				timeline.playFromStart();
+				
 				image.setScaleX(1.115);
 				image.setScaleY(1.115);
 				image.setStyle(style_inner2);
@@ -313,14 +308,7 @@ public class TabPreferiti extends ScrollPane{
       public void handle(MouseEvent e) {
 				
 		
-			 
-	
-		 
-		 
-			  
-		  System.out.println("Sto muovendo il mouse");
-		      timeline.stop();
-			  tooltip.hide();
+		  
 		  }
 				
 				
@@ -334,11 +322,8 @@ public class TabPreferiti extends ScrollPane{
 				new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				
-				System.out.println("Mouse rilasciato:" + e.getScreenX()+""+ e.getSceneX());
-				
-				
-				
+			
+						
 			}
 		});
 
@@ -347,11 +332,12 @@ public class TabPreferiti extends ScrollPane{
 			@Override
 			public void handle(MouseEvent e) {
 				
-				tooltip.hide();
 				image.setScaleX(1);
 				image.setScaleY(1);
 				image.setStyle(style_inner);
-				System.out.println("Sto uscendo con il mouse");
+				
+				
+				
 				
 				
 			}
@@ -374,38 +360,49 @@ public class TabPreferiti extends ScrollPane{
 
 		title = new Text(name);
 		title.setFill(Color.WHITE);
-		title.setCursor(Cursor.HAND);
+		final Tooltip tooltip = new Tooltip(serie.getNome());
+	  
 		
+		
+		final Timeline timeline = new Timeline();
+		timeline.getKeyFrames().add(
+	                new KeyFrame(Duration.seconds(0.5),
+	                  new EventHandler() {
+	                    // KeyFrame event handler
+	                	
+						@Override
+						public void handle(Event arg0) {
+							// TODO Auto-generated method stub
+							    
+		                        if (timeline.getCurrentTime().greaterThanOrEqualTo(timeline.getTotalDuration())){
+		                                   	
+			                         timeline.stop();
+				                    
+			                        	
+		                        }       
+		                              
+						}		
+						
+	                }));
+		
+		tooltip.install(title, tooltip);
 		
 		title.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
 				
-				/*for(int i = 0; i < serie.getStagioni().size(); i++){
-					
-					
-					CreateEpisodesDetail episodi= new CreateEpisodesDetail(serie, serie.getStagioni().get(i).getNumero());
-					System.out.println("Episodi stagione " + serie.getStagioni().get(i).getNumero() + " :");
-					
-					for(int j = 0; j < episodi.getEpisodiStagione().size(); j++)
-					System.out.println(episodi.getEpisodiStagione().get(j).getEpisodeName());
-					
-					System.out.println("\n\n\n\n");
-				}*/
-				//
-				Popup pop = new Popup();
-		      
-			    pop.show(image, 200, 200);
-		          // new InfoDownloadPage(Guiseries2.stage, Modality.APPLICATION_MODAL, serie);
+		
 			}
 		});
 		
 		
 		title.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
-				// change the z-coordinate of the circle
+			    
+				title.setCursor(Cursor.HAND);
 				title.setUnderline(true);
 				title.setFill(Color.WHITE);
-				image.setTooltip(new Tooltip(serie.getNome()));
+				tooltip.show(title, me.getScreenX(), me.getScreenY() + 11);
+			
 			}
 		});
         
@@ -414,9 +411,11 @@ public class TabPreferiti extends ScrollPane{
 		
 		title.setOnMouseExited(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent me) {
+				
+				title.setCursor(null);
 				title.setUnderline(false);
 				title.setFill(Color.WHITE);
-				//image.getTooltip().requestFocus();
+				tooltip.hide();
 			}
 		});
 		title.setFont(javafx.scene.text.Font.font("Arial", FontWeight.BOLD, 16));
@@ -425,7 +424,42 @@ public class TabPreferiti extends ScrollPane{
 		grid.setHalignment(title, HPos.CENTER);
 		grid.add(title, 0, 1);
 		
-		
+	    
+        grid.setOnDragDetected(new EventHandler <MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                /* drag was detected, start drag-and-drop gesture*/
+                System.out.println("onDragDetected");
+                
+                /* allow any transfer mode */
+                Dragboard db = grid.startDragAndDrop(TransferMode.MOVE);
+               
+             
+                /* put a string on dragboard */
+                ClipboardContent content = new ClipboardContent();
+               
+                content.putUrl("http://www.thetvdb.com/banners/_cache/posters/95491-1.jpg");
+                db.setContent(content);
+                System.out.println(db.getUrl());
+                event.consume();
+            }
+        });
+        
+        grid.setOnDragDone(new EventHandler <DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                /* the drag-and-drop gesture ended */
+                System.out.println("onDragDone");
+                /* if the data was successfully moved, clear it */
+                if (event.getTransferMode() == TransferMode.MOVE) {
+                      
+                
+             
+                }
+                
+                event.consume();
+            }
+        });
 
 		return grid;
 	}

@@ -24,6 +24,7 @@ import org.transdroid.daemon.Torrent;
 import android.os.Bundle;
 
 public class SetDownloadLocationTask extends DaemonTask {
+	
 	protected SetDownloadLocationTask(IDaemonAdapter adapter, Torrent targetTorrent, Bundle data) {
 		super(adapter, DaemonMethod.SetDownloadLocation, targetTorrent, data);
 	}

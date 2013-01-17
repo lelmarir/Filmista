@@ -2,3 +2,7 @@ eclipse.preferences.version=1
 encoding//src/org/hamisto/userInterface/Guiseries2.java=UTF-8
 encoding//src/org/hamisto/userInterface/MyDialog.java=UTF-8
 encoding//src/org/hamisto/userInterface/SerieInfo.java=UTF-8
+encoding//src/org/hamisto/userInterface/TabDownload.java=UTF-8
+encoding//src/search/daemon/Refresh.java=UTF-8
+encoding//src/search/find/RefreshDataTorrent.java=UTF-8
+encoding//src/search/find/RicercaTorrent.java=UTF-8
