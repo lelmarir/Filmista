@@ -23,7 +23,7 @@ import org.transdroid.daemon.Torrent;
 import search.find.RefreshDataTorrent;
 
 public class TabDownload extends ScrollPane {
-
+	
 	private Label label;
 	public static VBox mainDownload;
 	public Button start;
